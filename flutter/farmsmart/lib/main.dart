@@ -4,6 +4,8 @@ import '/Login_SignUp.dart';
 import '/screens/task_list_page.dart';
 import '/screens/navigation.dart';
 import '/cropmanagement/farm_records.dart';
+import 'otp_verification_screen.dart';
+import 'otp_request_screen.dart';
 
 
 import '/chats/chats.dart';
@@ -29,6 +31,7 @@ class MyApp extends StatelessWidget {  // Use StatelessWidget as there is no mut
         '/login':(context)=>LoginPage(),
         '/crop':(context)=>FarmRecordsScreen(),
         '/home':(context)=>HomePage(),
+        
         
       },
       onUnknownRoute: (settings) {

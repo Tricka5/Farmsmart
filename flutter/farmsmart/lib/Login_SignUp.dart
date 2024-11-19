@@ -1,228 +1,141 @@
-import 'package:bluechat/chats/chats.dart';
-import 'package:bluechat/main.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:bluechat/screens/navigation.dart';
+import 'package:bluechat/screens/task_list_page.dart'; // Assuming this is your home page after login
+import 'sign_up.dart';
 
-
-import '/financialManagement/ledger_page.dart';  // Make sure this path is correct
-import '/Login_SignUp.dart';
-import '/screens/task_list_page.dart';
-import '/screens/navigation.dart';
-import '/cropmanagement/farm_records.dart';
-
-
-class MyApp extends StatefulWidget {
+class LoginPage extends StatefulWidget {
   @override
-  State<MyApp> createState() => _MyAppState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _MyAppState extends State<MyApp> {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Login and Sign Up Page',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      home: LoginPage(),
-    );
-  }
-}
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+  String _errorMessage = '';
 
-class LoginPage extends StatelessWidget {
+  // Secure storage instance to store JWT
+  final FlutterSecureStorage _storage = FlutterSecureStorage();
+
+  // API endpoint for login
+  final String _apiUrl = 'http://localhost:3000/users/login'; // Replace with your actual API URL
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 219, 250, 224),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(100.0),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
                 child: Image.asset(
-                  'Logo.png',
+                  'Logo.png', // Replace with your logo path
                   height: 100,
                 ),
               ),
-              SizedBox(
-                height: 100,
-                width: 100,
-              ),
-              Text(
-                "Log into your Account",
-                style: TextStyle(fontSize: 20),
-              ),
+              SizedBox(height: 20),
+              Text("Log into your Account", style: TextStyle(fontSize: 20)),
               SizedBox(height: 50),
-              SizedBox(
-                height: 40,
-                width: 400,
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Enter email',
-                    hintStyle: TextStyle(color: Colors.black38),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16),
-              SizedBox(
-                height: 40,
-                width: 400,
-                child: TextField(
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: 'Enter password',
-                    hintStyle: TextStyle(color: Colors.black38),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16),
-              Align(
-                alignment: Alignment.topCenter,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ResetPasswordPage()),
-                    );
-                  },
-                  child: Text(
-                    'FORGOT YOUR PASSWORD?',
-                    style: TextStyle(
-                        color: Colors.green[700], fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  // Login functionality
-                  
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => HomePage()));
-                },
-                child: Text(
-                  'LOG IN',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      const Color.fromARGB(255, 23, 78, 27), // Deep green color
-                  minimumSize: Size(150, 50),
-                ),
-              ),
-              SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Don't have an account?"),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SignUpPage()),
-                      );
-                    },
-                    child: Text(
-                      'Sign Up',
-                      style: TextStyle(color: Colors.green[700]),
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    // Email Field with Underline
+                    TextFormField(
+                      controller: emailController,
+                      decoration: InputDecoration(
+                        hintText: 'Enter email',
+                        filled: true,
+                        fillColor: Colors.white,
+                        // Underline border
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.green),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter an email';
+                        }
+                        if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(value)) {
+                          return 'Enter a valid email address';
+                        }
+                        return null;
+                      },
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class SignUpPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 219, 250, 224),
-      appBar: AppBar(
-        title: Text('Sign Up or Log In'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "enter full name",
-              ),
-              SizedBox(
-                  height: 100,
-                  width: 350,
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'enter full name',
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                    SizedBox(height: 16),
+                    // Password Field with Underline
+                    TextFormField(
+                      controller: passwordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        hintText: 'Enter password',
+                        filled: true,
+                        fillColor: Colors.white,
+                        // Underline border
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.green),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a password';
+                        }
+                        return null;
+                      },
                     ),
-                  )),
-              SizedBox(height: 10),
-              Text("Email"),
-              SizedBox(
-                  height: 50,
-                  width: 350,
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Enter email',
-                      hintStyle: TextStyle(color: Colors.black38),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                    SizedBox(height: 16),
+                    // Error Message (if any)
+                    if (_errorMessage.isNotEmpty)
+                      Text(
+                        _errorMessage,
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    SizedBox(height: 16),
+                    // Login Button
+                    ElevatedButton(
+                      onPressed: _isLoading ? null : _login,
+                      child: _isLoading
+                          ? CircularProgressIndicator(color: Colors.white)
+                          : Text('LOG IN', style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green[700],
+                        minimumSize: Size(150, 50),
+                      ),
                     ),
-                  )),
-              Text("password"),
-              SizedBox(height: 16),
-              SizedBox(
-                  height: 50,
-                  width: 350,
-                  child: TextField(
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      hintText: 'Enter password',
-                      hintStyle: TextStyle(color: Colors.black38),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                    SizedBox(height: 16),
+                    // SignUp Link
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Don't have an account?"),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => SignUpPage()),
+                            );
+                          },
+                          child: Text(
+                            'Sign Up',
+                            style: TextStyle(color: Colors.green[700]),
+                          ),
+                        ),
+                      ],
                     ),
-                  )),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {},
-                child: Text(
-                  'SIGN UP',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[700],
-                  minimumSize: Size(200, 50), // Medium-sized button
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+                  ],
                 ),
               ),
             ],
@@ -231,58 +144,55 @@ class SignUpPage extends StatelessWidget {
       ),
     );
   }
-}
 
-class ResetPasswordPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.lightGreen[50],
-      appBar: AppBar(
-        title: Text('Reset Password'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 100,
-                width: 350,
-                child: TextField(
-                  decoration: InputDecoration(
-                   
-                    hintText: 'Enter email',
-                    hintStyle: TextStyle(color: Colors.black38),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  // Reset password functionality
-                },
-                child: Text(
-                  'RESET PASSWORD',
-                  style: TextStyle(color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[700],
-                  minimumSize: Size(200, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  // Handle Login API request
+  Future<void> _login() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = ''; // Clear previous error message
+      });
+
+      try {
+        final response = await http.post(
+          Uri.parse(_apiUrl),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'email': emailController.text.trim(),
+            'password': passwordController.text.trim(),
+          }),
+        );
+
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          final responseData = jsonDecode(response.body);
+          final String token = responseData['access_token'];
+
+          // Store the JWT token securely
+          await _storage.write(key: 'jwt_token', value: token);
+
+          // Navigate to the home page
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+          );
+        } else {
+          setState(() {
+            _errorMessage = 'Invalid email or password';
+          });
+        }
+      } catch (e) {
+        setState(() {
+          if (e is http.ClientException) {
+            _errorMessage = 'Network error. Please check your connection.';
+          } else {
+            _errorMessage = 'An error occurred. Please try again later.';
+          }
+        });
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 }

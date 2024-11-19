@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(TaskReminderApp());
 
 class TaskReminderApp extends StatelessWidget {
   @override
