@@ -1,5 +1,4 @@
-
-
+      
 import 'package:flutter/material.dart';
 
 void main() {
@@ -10,206 +9,226 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: FarmRecordsScreen(),
+      title: 'Agriculture Management',
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+      ),
+      home: HomeScreen(),
     );
   }
 }
 
-class FarmRecordsScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   @override
-  _FarmRecordsScreenState createState() => _FarmRecordsScreenState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Agriculture Management'),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Text(
+                'Agriculture Components',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+              decoration: BoxDecoration(
+                color: Colors.green,
+              ),
+            ),
+            ListTile(
+              title: Text('Fertilization'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FertilizationScreen()),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Crop Variety'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CropVarietyScreen()),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Crop Growth'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CropGrowthScreen()),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Pest Control'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PestControlScreen()),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Harvestation'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HarvestationScreen()),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+      body: Center(
+        child: Text('Select an option from the menu.'),
+      ),
+    );
+  }
 }
 
-class _FarmRecordsScreenState extends State<FarmRecordsScreen> {
-  // Selected crop variety, planting date, fertilizer date, pesticide date, and harvest details
-  String? selectedCrop;
-  DateTime? plantingDate;
-  DateTime? fertilizerDate;
-  DateTime? pesticideDate;
-  DateTime? harvestDate;
-  String? yieldAmount;
+// Fertilization Screen
+class FertilizationScreen extends StatefulWidget {
+  @override
+  _FertilizationScreenState createState() => _FertilizationScreenState();
+}
 
-  // Function to show the date picker
-  Future<void> _selectDate(BuildContext context, Function(DateTime) onDateSelected) async {
-    final DateTime initialDate = DateTime.now();
-    final DateTime firstDate = DateTime(2000);
-    final DateTime lastDate = DateTime(2101);
-
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: firstDate,
-      lastDate: lastDate,
-    );
-
-    if (picked != null) {
-      setState(() {
-        onDateSelected(picked);
-      });
-    }
-  }
+class _FertilizationScreenState extends State<FertilizationScreen> {
+  final _formKey = GlobalKey<FormState>();
+  String? fertilizerType;
+  DateTime? applicationDate;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Farm Records Management'),
+        title: Text('Fertilization'),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Planting Date and Crop Variety
-                    Text(
-                      'Planting Information',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    TextField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Enter Crop Variety',
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedCrop = value;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 20),
-                    Column(
-                      children: [
-                        Text('Planting Date: '),
-                        TextButton(
-                          onPressed: () => _selectDate(context, (date) {
-                            plantingDate = date;
-                          }),
-                          child: Text(
-                            plantingDate == null
-                                ? 'Select Date'
-                                : '${plantingDate?.toLocal()}'.split(' ')[0],
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-            
-                    // Fertilizer Application Date
-                    Text(
-                      'Fertilizer Application',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      
-                      
-                    ),
-                    
-                    Column(
-                      children: [
-                        Text('Application Date: '),
-                        TextButton(
-                          onPressed: () => _selectDate(context, (date) {
-                            fertilizerDate = date;
-                          }),
-                          child: TextField(
-                             decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'select Date',
-                      ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-            
-                    // Pesticide Application Date (Optional)
-                    Text(
-                      'Pesticide Application (Optional)',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Column(
-                      children: [
-                        Text('Application Date: '),
-
-                        TextButton(
-                          onPressed: () => _selectDate(context, (date) {
-                            pesticideDate = date;
-                          }),
-                          child: Text(
-                            pesticideDate == null
-                                ? 'Select Date'
-                                : '${pesticideDate?.toLocal()}'.split(' ')[0],
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-            
-                    // Harvest Details
-                    Text(
-                      'Harvest Information',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Column(
-                      children: [
-                        Text('Harvest Date: '),
-                        TextButton(
-                          onPressed: () => _selectDate(context, (date) {
-                            harvestDate = date;
-                          }),
-                          child: Text(
-                            harvestDate == null
-                                ? 'Select Date'
-                                : '${harvestDate?.toLocal()}'.split(' ')[0],
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    TextField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Yield Amount',
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          yieldAmount = value;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 20),
-            
-                    // Submit Button
-                    ElevatedButton(
-                      onPressed: () {
-                        if (selectedCrop != null && plantingDate != null && fertilizerDate != null) {
-                          // Process the data
-                          print('Crop Variety: $selectedCrop');
-                          print('Planting Date: ${plantingDate?.toLocal()}');
-                          print('Fertilizer Application Date: ${fertilizerDate?.toLocal()}');
-                          if (pesticideDate != null) {
-                            print('Pesticide Application Date: ${pesticideDate?.toLocal()}');
-                          }
-                          if (harvestDate != null && yieldAmount != null) {
-                            print('Harvest Date: ${harvestDate?.toLocal()}');
-                            print('Yield Amount: $yieldAmount');
-                          }
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Please fill in all mandatory fields')),
-                          );
-                        }
-                      },
-                      child: Text('Submit Record'),
-                    ),
-                  ],
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Fertilizer Type'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter fertilizer type';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  fertilizerType = value;
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Application Date'),
+                readOnly: true,
+                onTap: () async {
+                  final date = await showDatePicker(
+                    context: context,
+                    initialDate: applicationDate ?? DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2101),
+                  );
+                  if (date != null) {
+                    setState(() {
+                      applicationDate = date;
+                    });
+                  }
+                },
+                controller: TextEditingController(
+                  text: applicationDate != null
+                      ? "${applicationDate!.toLocal()}".split(' ')[0]
+                      : '',
                 ),
               ),
-            ),
-          ],
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Fertilizer applied: $fertilizerType on ${applicationDate!.toLocal()}')),
+                    );
+                    Navigator.pop(context);
+                  }
+                },
+                child: Text('Submit'),
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+}
+
+// Crop Variety Screen (Placeholder)
+class CropVarietyScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Crop Variety'),
+      ),
+      body: Center(
+        child: Text('Crop Variety Information goes here.'),
+      ),
+    );
+  }
+}
+
+// Crop Growth Screen (Placeholder)
+class CropGrowthScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Crop Growth'),
+      ),
+      body: Center(
+        child: Text('Crop Growth Information goes here.'),
+      ),
+    );
+  }
+}
+
+// Pest Control Screen (Placeholder)
+class PestControlScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Pest Control'),
+      ),
+      body: Center(
+        child: Text('Pest Control Information goes here.'),
+      ),
+    );
+  }
+}
+
+// Harvestation Screen (Placeholder)
+class HarvestationScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Harvestation'),
+      ),
+      body: Center(
+        child: Text('Harvestation Information goes here.'),
       ),
     );
   }
