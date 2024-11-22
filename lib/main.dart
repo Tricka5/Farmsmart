@@ -1,4 +1,3 @@
-      
 import 'package:flutter/material.dart';
 
 void main() {
@@ -9,7 +8,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Agriculture Management',
+      title: 'Livestock Management',
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
@@ -23,7 +22,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Agriculture Management'),
+        title: Text('Livestock Management'),
       ),
       drawer: Drawer(
         child: ListView(
@@ -31,7 +30,7 @@ class HomeScreen extends StatelessWidget {
           children: <Widget>[
             DrawerHeader(
               child: Text(
-                'Agriculture Components',
+                'Livestock Components',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -42,47 +41,38 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             ListTile(
-              title: Text('Fertilization'),
+              title: Text('Animal Identification'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => FertilizationScreen()),
+                  MaterialPageRoute(builder: (context) => AnimalIdentificationScreen()),
                 );
               },
             ),
             ListTile(
-              title: Text('Crop Variety'),
+              title: Text('Health & Veterinary Records'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CropVarietyScreen()),
+                  MaterialPageRoute(builder: (context) => HealthVeterinaryRecordsScreen()),
                 );
               },
             ),
             ListTile(
-              title: Text('Crop Growth'),
+              title: Text('Feeding Records'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CropGrowthScreen()),
+                  MaterialPageRoute(builder: (context) => FeedingRecordsScreen()),
                 );
               },
             ),
             ListTile(
-              title: Text('Pest Control'),
+              title: Text('Production Records'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PestControlScreen()),
-                );
-              },
-            ),
-            ListTile(
-              title: Text('Harvestation'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HarvestationScreen()),
+                  MaterialPageRoute(builder: (context) => ProductionRecordsScreen()),
                 );
               },
             ),
@@ -96,22 +86,26 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-// Fertilization Screen
-class FertilizationScreen extends StatefulWidget {
+// Animal Identification Screen
+class AnimalIdentificationScreen extends StatefulWidget {
   @override
-  _FertilizationScreenState createState() => _FertilizationScreenState();
+  _AnimalIdentificationScreenState createState() => _AnimalIdentificationScreenState();
 }
 
-class _FertilizationScreenState extends State<FertilizationScreen> {
+class _AnimalIdentificationScreenState extends State<AnimalIdentificationScreen> {
   final _formKey = GlobalKey<FormState>();
-  String? fertilizerType;
-  DateTime? applicationDate;
+  String? animalId;
+  String? animalSpecies;
+  String? gender;
+  DateTime? birthDate;
+
+  final TextEditingController _birthDateController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Fertilization'),
+        title: Text('Animal Identification'),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -120,116 +114,31 @@ class _FertilizationScreenState extends State<FertilizationScreen> {
           child: Column(
             children: [
               TextFormField(
-                decoration: InputDecoration(labelText: 'Fertilizer Type'),
+                decoration: InputDecoration(labelText: 'Animal ID'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter fertilizer type';
+                    return 'Please enter animal ID';
                   }
                   return null;
                 },
                 onSaved: (value) {
-                  fertilizerType = value;
+                  animalId = value;
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Application Date'),
-                readOnly: true,
-                onTap: () async {
-                  final date = await showDatePicker(
-                    context: context,
-                    initialDate: applicationDate ?? DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2101),
-                  );
-                  if (date != null) {
-                    setState(() {
-                      applicationDate = date;
-                    });
+                decoration: InputDecoration(labelText: 'Animal Species/Breed'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter species/breed';
                   }
+                  return null;
                 },
-                controller: TextEditingController(
-                  text: applicationDate != null
-                      ? "${applicationDate!.toLocal()}".split(' ')[0]
-                      : '',
-                ),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Fertilizer applied: $fertilizerType on ${applicationDate!.toLocal()}')),
-                    );
-                    Navigator.pop(context);
-                  }
+                onSaved: (value) {
+                  animalSpecies = value;
                 },
-                child: Text('Submit'),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// Crop Variety Screen (Placeholder)
-class CropVarietyScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Crop Variety'),
-      ),
-      body: Center(
-        child: Text('Crop Variety Information goes here.'),
-      ),
-    );
-  }
-}
-
-// Crop Growth Screen (Placeholder)
-class CropGrowthScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Crop Growth'),
-      ),
-      body: Center(
-        child: Text('Crop Growth Information goes here.'),
-      ),
-    );
-  }
-}
-
-// Pest Control Screen (Placeholder)
-class PestControlScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Pest Control'),
-      ),
-      body: Center(
-        child: Text('Pest Control Information goes here.'),
-      ),
-    );
-  }
-}
-
-// Harvestation Screen (Placeholder)
-class HarvestationScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Harvestation'),
-      ),
-      body: Center(
-        child: Text('Harvestation Information goes here.'),
-      ),
-    );
-  }
-}
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(labelText: 'Gender'),
+                value: gender, // Set the initial value
+                items: ['Male', 'Female'].map((String value) {
+  child: Text(value),
