@@ -66,7 +66,7 @@ class HomePage extends StatelessWidget {
             },
             icon: Icon(Icons.person, color: Colors.black),
             label: Text(
-              'ACCOUNT',
+              'User Note',
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
