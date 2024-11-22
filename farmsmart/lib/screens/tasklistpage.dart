@@ -59,7 +59,7 @@ class _TaskReminderScreenState extends State<TaskReminderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightBlueAccent.shade100,
+      backgroundColor: const Color.fromARGB(255, 247, 247, 247),
       body: SafeArea(
         child: Column(
           children: [
@@ -103,7 +103,7 @@ class _TaskReminderScreenState extends State<TaskReminderScreen> {
                       child: Container(
                         height: 100,
                         decoration: BoxDecoration(
-                          color: Colors.greenAccent,
+                          color: const Color.fromARGB(255, 241, 239, 239),
                           borderRadius: BorderRadius.circular(8),
                           boxShadow: [
                             BoxShadow(
@@ -129,7 +129,8 @@ class _TaskReminderScreenState extends State<TaskReminderScreen> {
                                   tasks[index]!.title,
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black,
+                                    color:
+                                        const Color.fromARGB(255, 53, 50, 50),
                                   ),
                                 ),
                                 subtitle: Text(
@@ -204,7 +205,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 25, 201, 204),
+      backgroundColor: const Color.fromARGB(255, 251, 255, 255),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -249,7 +250,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 decoration: InputDecoration(
                   hintText: "Enter title",
                   filled: true,
-                  fillColor: Colors.grey.shade200,
+                  fillColor: const Color.fromARGB(255, 236, 234, 234),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,
@@ -295,7 +296,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 decoration: InputDecoration(
                   hintText: "Enter description",
                   filled: true,
-                  fillColor: Colors.grey.shade200,
+                  fillColor: const Color.fromARGB(255, 236, 234, 234),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,

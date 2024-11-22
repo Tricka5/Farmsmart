@@ -31,13 +31,13 @@ class FarmSmartHomePage extends StatelessWidget {
         ],
       ),
       body: Container(
-        color: Colors.lightGreen[100],
+        color: const Color.fromARGB(255, 255, 255, 255),
         child: Center(
           child: Container(
             width: 300,
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: const Color.fromARGB(255, 206, 234, 176),
               borderRadius: BorderRadius.circular(8),
               boxShadow: [
                 BoxShadow(
@@ -55,104 +55,9 @@ class FarmSmartHomePage extends StatelessWidget {
                   style: TextStyle(fontSize: 16, color: Colors.black),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to the About Developers page
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AboutDevelopersPage()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  ),
-                  child: Text(
-                    'About Developers',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-// About Developers Page
-class AboutDevelopersPage extends StatelessWidget {
-  final List<Map<String, String>> developers = [
-    {'name': 'Gizzoh', 'photo': 'assets/gizzoh.jpg'},
-    {'name': 'Joshua', 'photo': 'assets/joshua.jpg'},
-    {'name': 'Mziliwe', 'photo': 'assets/mziliwe.jpg'},
-    {'name': 'Tricka Bita', 'photo': 'assets/tricka_bita.jpg'},
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.lightGreen,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context); // Go back to the previous page
-          },
-        ),
-        title: Text('Developers', style: TextStyle(color: Colors.black)),
-      ),
-      body: Container(
-        color: Colors.lightGreen[100],
-        padding: EdgeInsets.all(16),
-        child: ListView.builder(
-          itemCount: developers.length,
-          itemBuilder: (context, index) {
-            final developer = developers[index];
-            return Container(
-              margin: EdgeInsets.only(bottom: 16),
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 4,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(
-                        developer['photo']!,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Text(
-                    developer['name']!,
-                    style: TextStyle(fontSize: 18, color: Colors.black),
-                  ),
-                ],
-              ),
-            );
-          },
         ),
       ),
     );
