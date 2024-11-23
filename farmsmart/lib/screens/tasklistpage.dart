@@ -28,32 +28,31 @@ class TaskReminderScreen extends StatefulWidget {
 }
 
 class _TaskReminderScreenState extends State<TaskReminderScreen> {
-  List<Task?> tasks = List.generate(7, (index) => null);
+  List<Task> tasks = [];
 
-  void addOrEditTask(int index) async {
+  void addOrEditTask(int? index) async {
     final Task? result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AddTaskScreen(task: tasks[index]),
+        builder: (context) => AddTaskScreen(task: index != null ? tasks[index] : null),
       ),
     );
 
     if (result != null) {
       setState(() {
-        tasks[index] = result;
+        if (index == null) {
+          tasks.add(result); // Add new task
+        } else {
+          tasks[index] = result; // Edit existing task
+        }
       });
     }
   }
 
   void deleteTask(int index) {
     setState(() {
-      tasks[index] = null;
+      tasks.removeAt(index);
     });
-  }
-
-  void onBackArrowTap() {
-    // Handle back arrow press
-    print("Back arrow tapped");
   }
 
   @override
@@ -70,7 +69,7 @@ class _TaskReminderScreenState extends State<TaskReminderScreen> {
               child: Row(
                 children: [
                   InkWell(
-                    onTap: onBackArrowTap,
+                    onTap: () => print("Back arrow tapped"),
                     child: Icon(
                       Icons.arrow_back,
                       size: 24,
@@ -90,64 +89,86 @@ class _TaskReminderScreenState extends State<TaskReminderScreen> {
               ),
             ),
             SizedBox(height: 16),
-            // Task cards
+            // Task List with Add Task always on top
             Expanded(
               child: ListView.builder(
-                itemCount: tasks.length,
+                itemCount: tasks.length + 1,
                 itemBuilder: (context, index) {
-                  return Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: InkWell(
-                      onTap: () => addOrEditTask(index),
-                      child: Container(
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 241, 239, 239),
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 4,
-                              offset: Offset(2, 2),
-                            ),
-                          ],
-                        ),
-                        child: tasks[index] == null
-                            ? Center(
-                                child: Text(
-                                  "Add task",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              )
-                            : ListTile(
-                                title: Text(
-                                  tasks[index]!.title,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color:
-                                        const Color.fromARGB(255, 53, 50, 50),
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  tasks[index]!.date != null
-                                      ? "${tasks[index]!.date!.toLocal()}"
-                                          .split(' ')[0]
-                                      : "No date selected",
-                                  style: TextStyle(color: Colors.black54),
-                                ),
-                                trailing: IconButton(
-                                  icon: Icon(Icons.delete, color: Colors.red),
-                                  onPressed: () => deleteTask(index),
-                                ),
+                  if (index == 0) {
+                    // The "Add Task" card at the top
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: InkWell(
+                        onTap: () => addOrEditTask(null),
+                        child: Container(
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: Colors.greenAccent,
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 4,
+                                offset: Offset(2, 2),
                               ),
+                            ],
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Add task",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: const Color.fromARGB(255, 0, 0, 0),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  } else {
+                    // Display the filled tasks
+                    final taskIndex = index - 1;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: InkWell(
+                        onTap: () => addOrEditTask(taskIndex),
+                        child: Container(
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 241, 239, 239),
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 4,
+                                offset: Offset(2, 2),
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
+                            title: Text(
+                              tasks[taskIndex].title,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: const Color.fromARGB(255, 53, 50, 50),
+                              ),
+                            ),
+                            subtitle: Text(
+                              tasks[taskIndex].date != null
+                                  ? "${tasks[taskIndex].date!.toLocal()}".split(' ')[0]
+                                  : "No date selected",
+                              style: TextStyle(color: Colors.black54),
+                            ),
+                            trailing: IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => deleteTask(taskIndex),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }
                 },
               ),
             ),
@@ -189,7 +210,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
-    if (picked != null && picked != selectedDate) {
+    if (picked != null) {
       setState(() {
         selectedDate = picked;
       });
@@ -226,7 +247,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   ),
                   SizedBox(width: 10),
                   Text(
-                    "Add a Task",
+                    widget.task == null ? "Add a Task" : "Edit Task",
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -259,29 +280,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               ),
             ),
             // Date Picker
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text("Select date",
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: InkWell(
-                onTap: () => selectDate(context),
-                child: Row(
-                  children: [
-                    Icon(Icons.calendar_today, color: Colors.black),
-                    SizedBox(width: 8),
-                    Text(
-                      selectedDate != null
-                          ? "${selectedDate!.toLocal()}".split(' ')[0]
-                          : "No date selected",
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+           
             // Description Input
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -304,7 +303,29 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 ),
               ),
             ),
-            // Save Button
+             Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text("Select date for the task",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: InkWell(
+                onTap: () => selectDate(context),
+                child: Row(
+                  children: [
+                    Icon(Icons.calendar_today, color: Colors.black),
+                    SizedBox(width: 8),
+                    Text(
+                      selectedDate != null
+                          ? "${selectedDate!.toLocal()}".split(' ')[0]
+                          : "No date selected",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             Spacer(),
             Padding(
               padding: const EdgeInsets.all(16.0),
