@@ -28,7 +28,17 @@ class _CropManagementPageState extends State<CropManagementPage> {
     });
   }
 
-  
+  void deleteCrop(int index) {
+    setState(() {
+      savedDetails.removeAt(index);
+    });
+  }
+
+  void updateCrop(int index, Map<String, String> updatedDetails) {
+    setState(() {
+      savedDetails[index] = updatedDetails;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
