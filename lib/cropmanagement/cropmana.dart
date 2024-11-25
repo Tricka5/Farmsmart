@@ -121,14 +121,7 @@ class CropAnalyticsPage extends StatefulWidget {
   _CropAnalyticsPageState createState() => _CropAnalyticsPageState();
 }
 
-class _CropAnalyticsPageState extends State<CropAnalyticsPage> {
-  final _formKey = GlobalKey<FormState>();
-  Map<String, String> details = {
-    'Crop variety': '',
-    'Crop growth': '',
-    'Pest control': '',
-    'Harvestation': ''
-  };
+
 
   @override
   void initState() {
