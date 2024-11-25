@@ -14,7 +14,19 @@ class MyApp extends StatelessWidget {
   }
 }
 
+class CropManagementPage extends StatefulWidget {
+  @override
+  _CropManagementPageState createState() => _CropManagementPageState();
+}
 
+class _CropManagementPageState extends State<CropManagementPage> {
+  List<Map<String, String>> savedDetails = [];
+
+  void addCrop(Map<String, String> details) {
+    setState(() {
+      savedDetails.add(details);
+    });
+  }
 
   void deleteCrop(int index) {
     setState(() {
