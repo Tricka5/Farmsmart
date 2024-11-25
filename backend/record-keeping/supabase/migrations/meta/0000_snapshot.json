@@ -1,0 +1,354 @@
+{
+  "id": "b26c2130-6f6a-4bc7-9598-9228fe270f93",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.cash_book": {
+      "name": "cash_book",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "cr_date_of_transaction": {
+          "name": "cr_date_of_transaction",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "cr_product_name": {
+          "name": "cr_product_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cr_contractor": {
+          "name": "cr_contractor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.inboxparticipants": {
+      "name": "inboxparticipants",
+      "schema": "",
+      "columns": {
+        "userid": {
+          "name": "userid",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inboxid": {
+          "name": "inboxid",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "inboxparticipants_userid_users_userid_fk": {
+          "name": "inboxparticipants_userid_users_userid_fk",
+          "tableFrom": "inboxparticipants",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userid"
+          ],
+          "columnsTo": [
+            "userid"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "inboxparticipants_inboxid_inbox_inboxid_fk": {
+          "name": "inboxparticipants_inboxid_inbox_inboxid_fk",
+          "tableFrom": "inboxparticipants",
+          "tableTo": "inbox",
+          "columnsFrom": [
+            "inboxid"
+          ],
+          "columnsTo": [
+            "inboxid"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "inboxparticipants_userid_inboxid_pk": {
+          "name": "inboxparticipants_userid_inboxid_pk",
+          "columns": [
+            "userid",
+            "inboxid"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.inbox": {
+      "name": "inbox",
+      "schema": "",
+      "columns": {
+        "inboxid": {
+          "name": "inboxid",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "lastmessage": {
+          "name": "lastmessage",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.legderAccount": {
+      "name": "legderAccount",
+      "schema": "",
+      "columns": {
+        "ledgerAccountid": {
+          "name": "ledgerAccountid",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "itemname": {
+          "name": "itemname",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "transactor": {
+          "name": "transactor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.legderAccountEntry": {
+      "name": "legderAccountEntry",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount": {
+          "name": "amount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "ledgerAccountId": {
+          "name": "ledgerAccountId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "legderAccountEntry_ledgerAccountId_legderAccount_ledgerAccountid_fk": {
+          "name": "legderAccountEntry_ledgerAccountId_legderAccount_ledgerAccountid_fk",
+          "tableFrom": "legderAccountEntry",
+          "tableTo": "legderAccount",
+          "columnsFrom": [
+            "ledgerAccountId"
+          ],
+          "columnsTo": [
+            "ledgerAccountid"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.messages": {
+      "name": "messages",
+      "schema": "",
+      "columns": {
+        "inboxid": {
+          "name": "inboxid",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "userid": {
+          "name": "userid",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "message": {
+          "name": "message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdat": {
+          "name": "createdat",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "messages_inboxid_inbox_inboxid_fk": {
+          "name": "messages_inboxid_inbox_inboxid_fk",
+          "tableFrom": "messages",
+          "tableTo": "inbox",
+          "columnsFrom": [
+            "inboxid"
+          ],
+          "columnsTo": [
+            "inboxid"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "messages_userid_users_userid_fk": {
+          "name": "messages_userid_users_userid_fk",
+          "tableFrom": "messages",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userid"
+          ],
+          "columnsTo": [
+            "userid"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "userid": {
+          "name": "userid",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "firstname": {
+          "name": "firstname",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lastname": {
+          "name": "lastname",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "profilepicture": {
+          "name": "profilepicture",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "activationstatus": {
+          "name": "activationstatus",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      }
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
