@@ -4,21 +4,7 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: LivestockManagementPage(),
-    );
-  }
-}
 
-class LivestockManagementPage extends StatefulWidget {
-  @override
-  _LivestockManagementPageState createState() =>
-      _LivestockManagementPageState();
-}
 
 class _LivestockManagementPageState extends State<LivestockManagementPage> {
   List<Map<String, String>> savedDetails = [];
