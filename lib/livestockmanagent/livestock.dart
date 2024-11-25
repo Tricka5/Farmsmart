@@ -122,14 +122,6 @@ class LivestockAnalyticsPage extends StatefulWidget {
   _LivestockAnalyticsPageState createState() => _LivestockAnalyticsPageState();
 }
 
-class _LivestockAnalyticsPageState extends State<LivestockAnalyticsPage> {
-  final _formKey = GlobalKey<FormState>();
-  Map<String, String> details = {
-    'Livestock details': '',
-    'Production summary': '',
-    'Feed summary': '',
-    'Other resources': ''
-  };
 
   @override
   void initState() {
