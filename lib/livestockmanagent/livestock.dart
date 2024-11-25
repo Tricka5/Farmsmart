@@ -20,14 +20,6 @@ class LivestockManagementPage extends StatefulWidget {
       _LivestockManagementPageState();
 }
 
-class _LivestockManagementPageState extends State<LivestockManagementPage> {
-  List<Map<String, String>> savedDetails = [];
-
-  void addLivestock(Map<String, String> details) {
-    setState(() {
-      savedDetails.add(details);
-    });
-  }
 
   void deleteLivestock(int index) {
     setState(() {
