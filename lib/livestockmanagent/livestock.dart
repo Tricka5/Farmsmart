@@ -112,15 +112,6 @@ class _LivestockManagementPageState extends State<LivestockManagementPage> {
   }
 }
 
-class LivestockAnalyticsPage extends StatefulWidget {
-  final Map<String, String>? initialDetails;
-  final Function(Map<String, String>) onSave;
-
-  LivestockAnalyticsPage({this.initialDetails, required this.onSave});
-
-  @override
-  _LivestockAnalyticsPageState createState() => _LivestockAnalyticsPageState();
-}
 
 class _LivestockAnalyticsPageState extends State<LivestockAnalyticsPage> {
   final _formKey = GlobalKey<FormState>();
