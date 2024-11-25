@@ -111,6 +111,15 @@ class _CropManagementPageState extends State<CropManagementPage> {
   }
 }
 
+class CropAnalyticsPage extends StatefulWidget {
+  final Map<String, String>? initialDetails;
+  final Function(Map<String, String>) onSave;
+
+  CropAnalyticsPage({this.initialDetails, required this.onSave});
+
+  @override
+  _CropAnalyticsPageState createState() => _CropAnalyticsPageState();
+}
 
 class _CropAnalyticsPageState extends State<CropAnalyticsPage> {
   final _formKey = GlobalKey<FormState>();
