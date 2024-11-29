@@ -24,7 +24,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
   Future<void> fetchUsers() async {
     try {
       final response =
-          await http.get(Uri.parse('http://192.168.1.123:3000/users/allusers'));
+          await http.get(Uri.parse('https://record-keeping.onrender.com/users/allusers'));
       if (response.statusCode == 200 || response.statusCode == 2001) {
         setState(() {
           users = json.decode(response.body);
@@ -57,7 +57,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.123:3000/creatingnewconversation/startconva'),
+        Uri.parse('https://record-keeping.onrender.com/creatingnewconversation/startconva'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(requestData),
       );

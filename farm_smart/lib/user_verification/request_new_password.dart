@@ -26,7 +26,7 @@ class _RequestNewPasswordState extends State<RequestNewPassword> {
   Future<void> sendOtp(String email) async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.123:3000/users/otp/send'),
+        Uri.parse('https://record-keeping.onrender.com/users/otp/send'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email}),
       );

@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart'; // Import CachedNetworkImage
 
 import 'inbox_messages.dart';
+
 class Chats extends StatefulWidget {
   final String myUserId; // The ID of the logged-in user
 
@@ -26,7 +27,7 @@ class _ChatsState extends State<Chats> {
   Future<void> fetchUsers() async {
     try {
       final response =
-          await http.get(Uri.parse('http://192.168.1.123:3000/inboxparticipants/${widget.myUserId}/chat'));
+          await http.get(Uri.parse('https://record-keeping.onrender.com/inboxparticipants/${widget.myUserId}/chat'));
       if (response.statusCode == 200 || response.statusCode == 2001) {
         setState(() {
           users = json.decode(response.body);
@@ -80,7 +81,13 @@ class _ChatsState extends State<Chats> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Contacts'),
+        title: Text('Farm Smart',
+        style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                  ),
       ),
       body: loading
           ? Center(child: CircularProgressIndicator())
@@ -94,33 +101,35 @@ class _ChatsState extends State<Chats> {
                         final user = users[index];
                         String profilepicture = user['profilepicture'] ?? '';  // Safely handle null profilePicture
                         // Log the profile picture URL for debugging
-                        print('Profile Picture URL: $profilepicture');
                         
                         return GestureDetector(
                           onTap: () => NavigateToInbox(user['userid']),
-                          child: ListTile(
-                            leading: GestureDetector(
-                              onTap: () {
-                                // Navigate to the full-screen image view
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => FullScreenImage(
-                                      imageUrl: profilepicture.isNotEmpty 
-                                          ? profilepicture 
-                                          : 'assets/default_profile.png', // Use default image if null
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),  // Add padding between users
+                            child: ListTile(
+                              leading: GestureDetector(
+                                onTap: () {
+                                  // Navigate to the full-screen image view
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => FullScreenImage(
+                                        imageUrl: profilepicture.isNotEmpty 
+                                            ? profilepicture 
+                                            : 'assets/default_profile.png', // Use default image if null
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
-                              child: CircleAvatar(
-                                radius: _imageSize, // Dynamically change the size
-                                backgroundImage: profilepicture.isNotEmpty
-                                    ? CachedNetworkImageProvider(profilepicture)
-                                    : AssetImage('assets/default_profile.png') as ImageProvider,
+                                  );
+                                },
+                                child: CircleAvatar(
+                                  radius: _imageSize, // Dynamically change the size
+                                  backgroundImage: profilepicture.isNotEmpty
+                                      ? CachedNetworkImageProvider(profilepicture)
+                                      : AssetImage('assets/default_profile.png') as ImageProvider,
+                                ),
                               ),
+                              title: Text('${user['firstname']} ${user['lastname']}'),
                             ),
-                            title: Text('${user['firstname']} ${user['lastname']}'),
                           ),
                         );
                       },

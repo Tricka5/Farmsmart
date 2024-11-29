@@ -33,7 +33,7 @@ class _ChillsState extends State<Chills> {
   try {
     final response = await http.get(
       Uri.parse(
-          'http://192.168.1.123:3000/inboxparticipants/currentinbox/${widget.userId}/${widget.myUserId}'),
+          'https://record-keeping.onrender.com/inboxparticipants/currentinbox/${widget.userId}/${widget.myUserId}'),
     );
 
     if (response.statusCode == 200) {
@@ -58,7 +58,7 @@ class _ChillsState extends State<Chills> {
   Future<List<dynamic>> _fetchMessages() async {
     try {
       final response = await http
-          .get(Uri.parse('http://192.168.1.123:3000/message/$inboxId/message'));
+          .get(Uri.parse('https://record-keeping.onrender.com/message/$inboxId/message'));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -101,7 +101,7 @@ class _ChillsState extends State<Chills> {
     try {
       final response = await http
           .post(
-            Uri.parse('http://192.168.1.123:3000/message/send'),
+            Uri.parse('https://record-keeping.onrender.com/message/send'),
             headers: {'Content-Type': 'application/json'},
             body: json.encode(requestData),
           )

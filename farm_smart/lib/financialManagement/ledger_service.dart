@@ -4,7 +4,7 @@ import 'ledger.dart';
 import 'ledger_entry.dart';
 
 class LedgerService {
-  final String baseUrl = 'http://localhost:3000'; // Use your correct API URL
+  final String baseUrl = 'https://record-keeping.onrender.com'; // Use your correct API URL
 
   // Fetch ledger list
   Future<List<Ledger>> fetchLedgers() async {

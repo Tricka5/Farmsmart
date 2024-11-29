@@ -26,7 +26,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final FlutterSecureStorage _storage = FlutterSecureStorage();
 
   // API endpoint for registration
-  final String _apiUrl = 'http://192.168.1.123:3000/users/createuser'; // Replace with your actual API URL
+  final String _apiUrl = 'https://record-keeping.onrender.com/users/createuser'; // Replace with your actual API URL
 
   @override
   Widget build(BuildContext context) {
