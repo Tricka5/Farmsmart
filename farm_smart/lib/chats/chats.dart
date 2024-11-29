@@ -27,7 +27,7 @@ class _ChatsState extends State<Chats> {
   Future<void> fetchUsers() async {
     try {
       final response =
-          await http.get(Uri.parse('https://record-keeping.onrender.com/inboxparticipants/${widget.myUserId}/chat'));
+          await http.get(Uri.parse('https://farmsmart-0yqz.onrender.com/inboxparticipants/${widget.myUserId}/chat'));
       if (response.statusCode == 200 || response.statusCode == 2001) {
         setState(() {
           users = json.decode(response.body);

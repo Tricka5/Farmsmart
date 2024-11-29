@@ -36,7 +36,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
   Future<void> _getProfileData() async {
     try {
       final response = await http.get(
-        Uri.parse('https://record-keeping.onrender.com/users/${widget.currentUserId}'),
+        Uri.parse('https://farmsmart-0yqz.onrender.com/users/${widget.currentUserId}'),
       );
 
       if (response.statusCode == 200) {
@@ -111,7 +111,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
       _isSubmitting = true;
     });
 
-    final uri = Uri.parse('https://record-keeping.onrender.com/cloudinary/upload');
+    final uri = Uri.parse('https://farmsmart-0yqz.onrender.com/cloudinary/upload');
     var request = http.MultipartRequest('PUT', uri);
     request.fields['email'] = widget.currentUserEmail;
 
@@ -214,9 +214,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
               : () {
                   if (_formKey.currentState!.validate()) {
                     if (fieldName == 'firstname') {
-                      _updateProfileField('https://record-keeping.onrender.com/users/updatefirstname', fieldName, firstName);
+                      _updateProfileField('https://farmsmart-0yqz.onrender.com/users/updatefirstname', fieldName, firstName);
                     } else if (fieldName == 'lastname') {
-                      _updateProfileField('https://record-keeping.onrender.com/users/updatelastname', fieldName, lastName);
+                      _updateProfileField('https://farmsmart-0yqz.onrender.com/users/updatelastname', fieldName, lastName);
                     }
                   }
                 },

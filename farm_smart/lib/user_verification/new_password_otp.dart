@@ -26,7 +26,7 @@ class _NewPasswordVerificationState extends State<NewPasswordVerification> {
   Future<void> verifyOtp(String email, String otp) async {
     try {
       final response = await http.post(
-        Uri.parse('https://record-keeping.onrender.com/users/otp/verify'),  // Update with actual API URL
+        Uri.parse('https://farmsmart-0yqz.onrender.com/users/otp/verify'),  // Update with actual API URL
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email, 'otp': otp}),
       );
@@ -80,7 +80,7 @@ class _NewPasswordVerificationState extends State<NewPasswordVerification> {
 
       try {
         final response = await http.post(
-          Uri.parse('https://record-keeping.onrender.com/users/otp/send'),  // Update with actual API URL
+          Uri.parse('https://farmsmart-0yqz.onrender.com/users/otp/send'),  // Update with actual API URL
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({'email': widget.email}),
         );

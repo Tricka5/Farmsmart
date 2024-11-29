@@ -27,7 +27,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   String _message = "";
   late DateTime _otpSentTime;
 
-  static const String baseUrl = "https://record-keeping.onrender.com";
+  static const String baseUrl = "https://farmsmart-0yqz.onrender.com";
   final Uri verifyOtpUrl = Uri.parse('$baseUrl/users/otp/verify');
   final Uri resendOtpUrl = Uri.parse('$baseUrl/users/otp/send');
 

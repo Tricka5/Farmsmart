@@ -46,7 +46,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
 
     try {
       final response = await http.put(
-        Uri.parse('https://record-keeping.onrender.com/user-aunthentication/update-password'),  // Update with the actual URL
+        Uri.parse('https://farmsmart-0yqz.onrender.com/user-aunthentication/update-password'),  // Update with the actual URL
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': widget.email,  // Send the email from the previous screen
