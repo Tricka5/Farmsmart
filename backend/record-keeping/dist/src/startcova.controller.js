@@ -29,12 +29,12 @@ let StartConversaation = class StartConversaation {
         try {
             const result = await this.inboxService.createEntry(firstuserid);
             const { inboxid: inboxid, lastmessage: last_message } = result;
-            const firstInboxParticipant = {
+            const inboxParticipant = {
                 firstuserid,
                 seconduserid,
                 inboxid,
             };
-            const AddFirstParticipant = await this.inboxParticipantsService.addParticipant(firstInboxParticipant);
+            const AddFirstParticipant = await this.inboxParticipantsService.addParticipant(inboxParticipant);
             return {
                 AddFirstParticipant,
             };

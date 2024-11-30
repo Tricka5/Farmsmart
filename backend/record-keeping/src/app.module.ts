@@ -20,9 +20,12 @@ import { LiveStockModule } from './live-stock/live-stock.module';
 import { CropModule } from './crop/crop.module';
 import { LiveStockRecordModule } from './live-stock-record/live-stock-record.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { WebSocketModule } from './websocket/websocket.module';
 
 @Module({
-  imports: [MessageModule, UsersModule, CashBookModule, InboxModule, InboxparticipantsModule, StartconversationModule, LedgerModule, LedgerEntryModule, EmailModule, OtpModule, UserAunthenticationModule, CropRecordModule, LiveStockModule, CropModule, LiveStockRecordModule, CloudinaryModule],
+  imports: [MessageModule, UsersModule, CashBookModule, InboxModule, InboxparticipantsModule, StartconversationModule, LedgerModule, LedgerEntryModule, EmailModule, OtpModule, UserAunthenticationModule, CropRecordModule, LiveStockModule, CropModule, LiveStockRecordModule, CloudinaryModule,
+    WebSocketModule
+  ],
   controllers: [AppController,StartConversaation],
   providers: [AppService,InboxparticipantsService,InboxService],
 })

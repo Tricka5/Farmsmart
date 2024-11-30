@@ -1,10 +1,10 @@
-import 'package:farmsmart/user_verification/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async';  // Import Timer for countdown
 import 'package:farmsmart/home/home.dart';  // Import the correct file where FarmSmartScreen is defined
-import 'sign_up.dart';  // Import the file for SignUpPage
-
+import 'package:farmsmart/user_verification/sign_up.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';  // Import the spin kit package
 
 class OtpVerificationScreen extends StatefulWidget {
   final String email;
@@ -26,6 +26,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   final TextEditingController _otpController = TextEditingController();
   String _message = "";
   late DateTime _otpSentTime;
+  bool _isLoading = false;  // To control spinner visibility
+  late Timer _timer;
+  Duration _remainingTime = Duration(minutes: 10);  // 10 minutes countdown
 
   static const String baseUrl = "https://farmsmart-0yqz.onrender.com";
   final Uri verifyOtpUrl = Uri.parse('$baseUrl/users/otp/verify');
@@ -35,6 +38,22 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   void initState() {
     super.initState();
     _otpSentTime = DateTime.now();
+    _startCountdown();
+  }
+
+  // Start countdown timer
+  void _startCountdown() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      final difference = DateTime.now().difference(_otpSentTime);
+      setState(() {
+        _remainingTime = Duration(minutes: 10) - difference;
+      });
+
+      // Stop the timer when the remaining time reaches 0
+      if (_remainingTime.inSeconds <= 0) {
+        _timer.cancel();
+      }
+    });
   }
 
   // Verify OTP
@@ -45,6 +64,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       });
       return;
     }
+
+    setState(() {
+      _isLoading = true;  // Show spinner while waiting for response
+    });
 
     try {
       final response = await http.post(
@@ -82,28 +105,33 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       setState(() {
         _message = "Error: Unable to verify OTP. Please check your internet connection.";
       });
+    } finally {
+      setState(() {
+        _isLoading = false;  // Hide spinner after the response is received
+      });
     }
   }
 
   // Check if OTP can be resent
   bool canResendOtp() {
-    return DateTime.now().difference(_otpSentTime).inMinutes >= 10;
+    return _remainingTime.inSeconds <= 0;
   }
 
   // Resend OTP
   Future<void> resendOtp() async {
     if (!canResendOtp()) {
       setState(() {
-        _message = "You can resend OTP after 10 minutes.";
+        _message = "You can resend OTP after ${_getFormattedTime(_remainingTime)}.";
       });
       return;
     }
 
-    try {
-      setState(() {
-        _message = "Resending OTP...";
-      });
+    setState(() {
+      _message = "Resending OTP...";  // Show message when resending OTP
+      _isLoading = true;  // Show spinner
+    });
 
+    try {
       final response = await http.post(
         resendOtpUrl,
         headers: {'Content-Type': 'application/json'},
@@ -113,7 +141,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       if (response.statusCode == 200) {
         setState(() {
           _message = "OTP resent successfully! Check your email.";
-          _otpSentTime = DateTime.now();
+          _otpSentTime = DateTime.now();  // Reset OTP sent time
+          _remainingTime = Duration(minutes: 10);  // Reset countdown
         });
       } else {
         setState(() {
@@ -123,6 +152,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     } catch (e) {
       setState(() {
         _message = "Error: Unable to resend OTP. Please check your internet connection.";
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;  // Hide spinner after response
       });
     }
   }
@@ -136,14 +169,21 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   }
 
   // Format remaining time for OTP resend
-  String getFormattedTime(Duration duration) {
-    return "${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}";
+  String _getFormattedTime(Duration duration) {
+    int minutes = duration.inMinutes;
+    int seconds = duration.inSeconds % 60;
+    return "${minutes}:${seconds.toString().padLeft(2, '0')}";
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();  // Don't forget to cancel the timer
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    Duration remainingTime = Duration(minutes: 10) - DateTime.now().difference(_otpSentTime);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -180,15 +220,15 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  verifyOtp(widget.email, _otpController.text.trim());
-                },
+                onPressed: _isLoading ? null : () => verifyOtp(widget.email, _otpController.text.trim()),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green.shade600,
                   padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
                   minimumSize: const Size(double.infinity, 50),
                 ),
-                child: const Text('Verify OTP', style: TextStyle(fontSize: 16,color:Colors.white)),
+                child: _isLoading
+                    ? SpinKitThreeBounce(color: Colors.white, size: 30.0)  // Use SpinKit spinner
+                    : const Text('Verify OTP', style: TextStyle(fontSize: 16, color: Colors.white)),
               ),
               const SizedBox(height: 20),
               if (_message.isNotEmpty)
@@ -208,7 +248,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 child: Text(
                   canResendOtp()
                       ? 'Resend OTP'
-                      : "Resend available in ${getFormattedTime(remainingTime)}",
+                      : "Resend available in ${_getFormattedTime(_remainingTime)}",
                   style: TextStyle(
                     color: Colors.blue.shade700,
                     fontSize: 16,

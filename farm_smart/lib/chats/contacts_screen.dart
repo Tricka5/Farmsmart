@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'full_screen_image_page.dart';  // Import FullScreenImage widget
-import 'inbox_messages.dart';
-
+import 'inbox_messages.dart';  // Assuming this is the chat screen you want to navigate to
+import 'package:flutter_spinkit/flutter_spinkit.dart';  // Import flutter_spinkit
 
 class ContactsScreen extends StatefulWidget {
   final String myUserId; // The ID of the logged-in user
@@ -15,44 +15,31 @@ class ContactsScreen extends StatefulWidget {
 }
 
 class _ContactsScreenState extends State<ContactsScreen> {
-  List<dynamic> users = [];
-  bool loading = true;
-  String error = '';
   bool creatingInbox = false;
 
   // Fetch users from the API
-  Future<void> fetchUsers() async {
+  Future<List<dynamic>> fetchUsers() async {
     try {
-      final response =
-          await http.get(Uri.parse('https://farmsmart-0yqz.onrender.com/users/allusers'));
-      if (response.statusCode == 200 || response.statusCode == 2001) {
-        setState(() {
-          users = json.decode(response.body);
-          loading = false;
-        });
+      final response = await http.get(Uri.parse('https://farmsmart-0yqz.onrender.com/users/allusers'));
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
       } else {
-        setState(() {
-          error = 'Failed to fetch users';
-          loading = false;
-        });
+        throw Exception('Failed to fetch users');
       }
     } catch (e) {
-      setState(() {
-        error = 'Error fetching users: $e';
-        loading = false;
-      });
+      throw Exception('Error fetching users: $e');
     }
   }
 
   // Create inbox conversation and navigate to the chat page
-  Future<void> createInboxAndNavigate(int userId) async {
+  Future<void> createInboxAndNavigate(int userId, String firstName, String lastName) async {
     setState(() {
-      creatingInbox = true;
+      creatingInbox = true; // Show the spinner when the inbox is being created
     });
 
     final requestData = {
       'firstuserid': int.parse(widget.myUserId), // Logged-in user's ID
-      'seconduserid': userId.toInt(),
+      'seconduserid': userId,
     };
 
     try {
@@ -75,6 +62,8 @@ class _ContactsScreenState extends State<ContactsScreen> {
               builder: (context) => Chills(
                 userId: userId.toString(),
                 myUserId: widget.myUserId,  // Pass the logged-in user's ID
+                firstName: firstName,       // Pass the user's first name
+                lastName: lastName,         // Pass the user's last name
               ),
             ),
           );
@@ -96,54 +85,69 @@ class _ContactsScreenState extends State<ContactsScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    fetchUsers(); // Fetch users on screen load
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Contacts'),
       ),
-      body: loading
-          ? Center(child: CircularProgressIndicator())
-          : error.isNotEmpty
-              ? Center(child: Text(error))
-              : users.isEmpty
-                  ? Center(child: Text('No users found'))
-                  : ListView.builder(
-                      itemCount: users.length,
-                      itemBuilder: (context, index) {
-                        final user = users[index];
-                        return GestureDetector(
-                          onTap: () => createInboxAndNavigate(user['userid']), // Create conversation and navigate
-                          child: ListTile(
-                            leading: GestureDetector(
-                              onTap: () {
-                                // Navigate to FullScreenImage when the profile picture is tapped
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => FullScreenImage(
-                                      imageUrl: user['profilepicture'] ?? 'assets/default_profile.png',
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: CircleAvatar(
-                                radius: 30,
-                                backgroundImage: user['profilepicture'] != null && user['profilepicture'].isNotEmpty
-                                    ? NetworkImage(user['profilepicture'])  // Load network image if available
-                                    : AssetImage('assets/default_profile.png') as ImageProvider, // Fallback to default image
-                              ),
+      body: FutureBuilder<List<dynamic>>(
+        future: fetchUsers(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator()); // Show a progress indicator while loading
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No users found'));
+          } else {
+            final users = snapshot.data!;
+            return ListView.builder(
+              itemCount: users.length,
+              itemBuilder: (context, index) {
+                final user = users[index];
+                return GestureDetector(
+                  onTap: () => createInboxAndNavigate(
+                    user['userid'],              // Pass user ID
+                    user['firstname'],           // Pass the user's first name
+                    user['lastname'],            // Pass the user's last name
+                  ),
+                  child: ListTile(
+                    leading: GestureDetector(
+                      onTap: () {
+                        // Navigate to FullScreenImage when the profile picture is tapped
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FullScreenImage(
+                              imageUrl: user['profilepicture'] ?? 'assets/default_profile.png',
                             ),
-                            title: Text('${user['firstname']} ${user['lastname']}'),
                           ),
                         );
                       },
+                      child: CircleAvatar(
+                        radius: 30,
+                        backgroundImage: user['profilepicture'] != null && user['profilepicture'].isNotEmpty
+                            ? NetworkImage(user['profilepicture'])  // Load network image if available
+                            : AssetImage('assets/default_profile.png') as ImageProvider, // Fallback to default image
+                      ),
                     ),
+                    title: Text('${user['firstname']} ${user['lastname']}'),
+                  ),
+                );
+              },
+            );
+          }
+        },
+      ),
+      // Show the spinner while creating inbox
+      floatingActionButton: creatingInbox
+          ? Center(
+              child: SpinKitThreeBounce(
+                color: Colors.green,  // Customize the spinner color
+                size: 30.0,            // Customize the size of the spinner
+              ),
+            )
+          : null,  // No spinner when not creating inbox
     );
   }
 }

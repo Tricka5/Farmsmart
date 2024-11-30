@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:farmsmart/home/home.dart';
+import 'package:farmsmart/home/home.dart';  // Import the FarmSmartScreen
 
 class UpdatePasswordPage extends StatefulWidget {
   final String email;  // Email passed from the previous screen
@@ -86,11 +87,10 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Print the arguments before passing them
+    print("Navigating to UpdatePasswordPage with email: ${widget.email} and userId: ${widget.userId}");
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Update Password"),
-        backgroundColor: Colors.green.shade700,
-      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
@@ -131,7 +131,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
               ),
               SizedBox(height: 20),
 
-              // Update button
+              // Update button or loading spinner
               ElevatedButton(
                 onPressed: _isLoading ? null : _updatePassword,
                 style: ElevatedButton.styleFrom(
@@ -140,7 +140,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 child: _isLoading
-                    ? CircularProgressIndicator(color: Colors.white)
+                    ? SpinKitThreeBounce(color: Colors.white, size: 50.0)  // Show spinner while loading
                     : Text('Update Password', style: TextStyle(fontSize: 16, color: Colors.white)),
               ),
               SizedBox(height: 20),

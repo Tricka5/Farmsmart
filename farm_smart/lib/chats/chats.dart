@@ -3,7 +3,9 @@ import 'package:farmsmart/chats/full_screen_image_page.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:cached_network_image/cached_network_image.dart'; // Import CachedNetworkImage
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart'; // Import the flutter_spinkit package
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'; // Import Font Awesome icons
 
 import 'inbox_messages.dart';
 
@@ -26,8 +28,8 @@ class _ChatsState extends State<Chats> {
   // Fetch users from the API
   Future<void> fetchUsers() async {
     try {
-      final response =
-          await http.get(Uri.parse('https://farmsmart-0yqz.onrender.com/inboxparticipants/${widget.myUserId}/chat'));
+      final response = await http.get(Uri.parse(
+          'https://farmsmart-0yqz.onrender.com/inboxparticipants/${widget.myUserId}/chat'));
       if (response.statusCode == 200 || response.statusCode == 2001) {
         setState(() {
           users = json.decode(response.body);
@@ -48,7 +50,8 @@ class _ChatsState extends State<Chats> {
   }
 
   // Create inbox conversation and navigate to the chat page
-  Future<void> NavigateToInbox(int userId) async {
+  Future<void> NavigateToInbox(
+      int userId, String firstName, String lastName) async {
     setState(() {
       creatingInbox = true;
     });
@@ -58,7 +61,9 @@ class _ChatsState extends State<Chats> {
       MaterialPageRoute(
         builder: (context) => Chills(
           userId: userId.toString(),
-          myUserId: widget.myUserId,  // Pass the logged-in user's ID
+          myUserId: widget.myUserId, // Pass the logged-in user's ID
+          firstName: firstName, // Pass the user's first name
+          lastName: lastName, // Pass the user's last name
         ),
       ),
     );
@@ -81,16 +86,19 @@ class _ChatsState extends State<Chats> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Farm Smart',
-        style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green,
-                  ),
-                  ),
+        title: Text(
+          'Farm Smart',
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            color: Colors.green,
+          ),
+        ),
       ),
       body: loading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(
+              child: SpinKitThreeBounce(color: Colors.green, size: 50.0),
+            )
           : error.isNotEmpty
               ? Center(child: Text(error))
               : users.isEmpty
@@ -99,13 +107,14 @@ class _ChatsState extends State<Chats> {
                       itemCount: users.length,
                       itemBuilder: (context, index) {
                         final user = users[index];
-                        String profilepicture = user['profilepicture'] ?? '';  // Safely handle null profilePicture
-                        // Log the profile picture URL for debugging
-                        
+                        String profilepicture = user['profilepicture'] ??
+                            ''; // Safely handle null profilePicture
+
                         return GestureDetector(
-                          onTap: () => NavigateToInbox(user['userid']),
+                          onTap: () => NavigateToInbox(user['userid'],
+                              user['firstname'], user['lastname']),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),  // Add padding between users
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
                             child: ListTile(
                               leading: GestureDetector(
                                 onTap: () {
@@ -114,21 +123,25 @@ class _ChatsState extends State<Chats> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => FullScreenImage(
-                                        imageUrl: profilepicture.isNotEmpty 
-                                            ? profilepicture 
+                                        imageUrl: profilepicture.isNotEmpty
+                                            ? profilepicture
                                             : 'assets/default_profile.png', // Use default image if null
                                       ),
                                     ),
                                   );
                                 },
                                 child: CircleAvatar(
-                                  radius: _imageSize, // Dynamically change the size
+                                  radius:
+                                      _imageSize, // Dynamically change the size
                                   backgroundImage: profilepicture.isNotEmpty
-                                      ? CachedNetworkImageProvider(profilepicture)
-                                      : AssetImage('assets/default_profile.png') as ImageProvider,
+                                      ? CachedNetworkImageProvider(
+                                          profilepicture)
+                                      : AssetImage('assets/default_profile.png')
+                                          as ImageProvider,
                                 ),
                               ),
-                              title: Text('${user['firstname']} ${user['lastname']}'),
+                              title: Text(
+                                  '${user['firstname']} ${user['lastname']}'),
                             ),
                           ),
                         );
@@ -143,7 +156,7 @@ class _ChatsState extends State<Chats> {
             ),
           );
         },
-        child: Icon(Icons.contacts),
+        child: FaIcon(FontAwesomeIcons.users), // Font Awesome users icon
         backgroundColor: Colors.green,
       ),
     );

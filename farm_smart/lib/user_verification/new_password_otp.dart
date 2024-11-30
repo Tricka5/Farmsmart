@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'update_password_page.dart';  // Import your UpdatePasswordPage
+import 'package:flutter_spinkit/flutter_spinkit.dart';  // Import SpinKit package
+import 'dart:async';  // Import Timer for countdown functionality
 
 class NewPasswordVerification extends StatefulWidget {
   final String email;
@@ -14,16 +16,31 @@ class NewPasswordVerification extends StatefulWidget {
 class _NewPasswordVerificationState extends State<NewPasswordVerification> {
   final TextEditingController _otpController = TextEditingController();
   String _message = "";
+  bool _isLoading = false; // Add loading state
   late DateTime _otpSentTime;
+  late Timer _timer;
+  int _otpExpiryTime = 600; // OTP expiry time in seconds (10 minutes)
 
   @override
   void initState() {
     super.initState();
     _otpSentTime = DateTime.now(); // Record when OTP was sent
+    _startCountdown(); // Start the countdown timer
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel(); // Cancel the timer when widget is disposed
+    super.dispose();
   }
 
   // Function to verify OTP
   Future<void> verifyOtp(String email, String otp) async {
+    setState(() {
+      _isLoading = true;  // Start the spinner when the request is sent
+      _message = "";
+    });
+
     try {
       final response = await http.post(
         Uri.parse('https://farmsmart-0yqz.onrender.com/users/otp/verify'),  // Update with actual API URL
@@ -33,11 +50,11 @@ class _NewPasswordVerificationState extends State<NewPasswordVerification> {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
-        final bool activationStatus = responseData['activationstatus'];  // Check activation status
+        final bool? activationStatus = responseData['activationstatus'];  // Check activation status
 
-        if (activationStatus) {
+        if (activationStatus != null && activationStatus) {
           // If account is activated, extract userId and navigate to the UpdatePasswordPage
-          final String userId = responseData['userId']; // Assuming userId is returned in the response
+          final String userId = responseData['userid'].toString(); // Ensure userId is a String
 
           Navigator.pushReplacement(
             context,
@@ -63,48 +80,36 @@ class _NewPasswordVerificationState extends State<NewPasswordVerification> {
       setState(() {
         _message = "Error: $e";
       });
+    } finally {
+      setState(() {
+        _isLoading = false;  // Stop the spinner once the response is received
+      });
     }
   }
 
-  // Function to check if 10 minutes have passed since OTP was sent
-  bool canResendOtp() {
-    return DateTime.now().difference(_otpSentTime).inMinutes >= 10;
+  // Function to check if OTP has expired
+  bool isOtpExpired() {
+    return _otpExpiryTime <= 0;
   }
 
-  // Function to resend OTP if 10 minutes have passed
-  Future<void> resendOtp() async {
-    if (canResendOtp()) {
-      setState(() {
-        _message = "Resending OTP...";
-      });
-
-      try {
-        final response = await http.post(
-          Uri.parse('https://farmsmart-0yqz.onrender.com/users/otp/send'),  // Update with actual API URL
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({'email': widget.email}),
-        );
-
-        if (response.statusCode == 200) {
-          setState(() {
-            _message = "OTP resent successfully! Check your email.";
-            _otpSentTime = DateTime.now(); // Reset the OTP sent time
-          });
-        } else {
-          setState(() {
-            _message = "Failed to resend OTP. Please try again.";
-          });
-        }
-      } catch (e) {
+  // Function to start countdown for OTP expiry
+  void _startCountdown() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_otpExpiryTime > 0) {
         setState(() {
-          _message = "Error: $e";
+          _otpExpiryTime--;
         });
+      } else {
+        _timer.cancel(); // Stop the timer once OTP expires
       }
-    } else {
-      setState(() {
-        _message = "You can resend OTP after 10 minutes.";
-      });
-    }
+    });
+  }
+
+  // Format remaining time (seconds to mm:ss format)
+  String _formatTime(int seconds) {
+    int minutes = seconds ~/ 60;
+    int remainingSeconds = seconds % 60;
+    return "${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}";
   }
 
   @override
@@ -160,9 +165,11 @@ class _NewPasswordVerificationState extends State<NewPasswordVerification> {
                   padding: EdgeInsets.symmetric(vertical: 14, horizontal: 20),
                   minimumSize: Size(double.infinity, 40), // Full width button
                 ),
-                child: Text('Verify OTP', style: TextStyle(fontSize: 16,color: Colors.white),),
+                child: Text('Verify OTP', style: TextStyle(fontSize: 16, color: Colors.white)),
               ),
               SizedBox(height: 20),
+              if (_isLoading)
+                SpinKitThreeBounce(color: Colors.green, size: 50.0), // Spinner when loading
               if (_message.isNotEmpty)
                 Text(
                   _message,
@@ -175,17 +182,16 @@ class _NewPasswordVerificationState extends State<NewPasswordVerification> {
                   ),
                 ),
               SizedBox(height: 20),
-              TextButton(
-                onPressed: resendOtp,
-                child: Text(
-                  'Resend OTP',
-                  style: TextStyle(
-                    color: Colors.blue.shade700, // Vibrant orange for resend button
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
+              if (!isOtpExpired()) 
+                Text(
+                  "OTP expires in: ${_formatTime(_otpExpiryTime)}",
+                  style: TextStyle(color: Colors.red.shade700, fontSize: 16),
                 ),
-              ),
+              if (isOtpExpired())
+                Text(
+                  "OTP has expired. Please request a new one.",
+                  style: TextStyle(color: Colors.red.shade700, fontSize: 16),
+                ),
             ],
           ),
         ),

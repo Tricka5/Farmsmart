@@ -11,12 +11,12 @@ export declare class InboxparticipantsController {
         secondinboxid: number;
     }[]>;
     getAllUsers(id: string): Promise<{
-        password: string;
         userid: number;
         firstname: string;
         lastname: string;
         profilepicture: string;
         email: string;
+        password: string;
         activationstatus: boolean;
     }[]>;
     getCurrentInbox(params: any): Promise<{

@@ -10,13 +10,14 @@ exports.MessageModule = void 0;
 const common_1 = require("@nestjs/common");
 const message_service_1 = require("./message.service");
 const message_controller_1 = require("./message.controller");
+const websocket_gateway_1 = require("../websocket/websocket.gateway");
 let MessageModule = class MessageModule {
 };
 exports.MessageModule = MessageModule;
 exports.MessageModule = MessageModule = __decorate([
     (0, common_1.Module)({
         controllers: [message_controller_1.MessageController],
-        providers: [message_service_1.MessageService],
+        providers: [message_service_1.MessageService, websocket_gateway_1.WebSocketGatewayService],
     })
 ], MessageModule);
 //# sourceMappingURL=message.module.js.map

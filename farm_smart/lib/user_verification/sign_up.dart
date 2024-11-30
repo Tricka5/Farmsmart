@@ -19,7 +19,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController(); // Last name controller
   final _formKey = GlobalKey<FormState>();
-  bool _isLoading = false;
+  bool _isLoading = false; // State for loading indicator
   String _errorMessage = '';
 
   // Secure storage instance to store JWT
@@ -45,7 +45,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 SizedBox(height: 20),
                 Text(
                   "Create a new account",
-                  style: TextStyle(fontSize: screenWidth * 0.06),
+                  style: TextStyle(fontSize: screenWidth * 0.05,color: Colors.green),
                 ),
                 SizedBox(height: 50),
                 Form(
@@ -178,8 +178,8 @@ class _SignUpPageState extends State<SignUpPage> {
   Future<void> _signUp() async {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() {
-        _isLoading = true;
-        _errorMessage = ''; 
+        _isLoading = true;  // Show spinner
+        _errorMessage = '';  // Reset error message
       });
 
       try {
@@ -236,7 +236,7 @@ class _SignUpPageState extends State<SignUpPage> {
         }
       } finally {
         setState(() {
-          _isLoading = false;
+          _isLoading = false;  // Hide spinner after request completes
         });
       }
     }

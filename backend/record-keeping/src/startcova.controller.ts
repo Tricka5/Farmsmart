@@ -27,14 +27,14 @@ export class StartConversaation{
             //destructure the result
             const {inboxid:inboxid, lastmessage:last_message}=result;
 
-            const firstInboxParticipant={
+            const inboxParticipant={
                 firstuserid,
                 seconduserid,
                 inboxid,
                 
             };
             
-            const AddFirstParticipant=await this.inboxParticipantsService.addParticipant(firstInboxParticipant);
+            const AddFirstParticipant=await this.inboxParticipantsService.addParticipant(inboxParticipant);
             
             
             return{

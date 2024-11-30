@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';  // Import flutter_spinkit package
 import 'sign_up.dart';
 import 'email_input.dart';
 import 'package:farmsmart/home/home.dart';
@@ -133,11 +134,11 @@ class _LoginPageState extends State<LoginPage> {
                           minimumSize: Size(screenWidth * 0.6, 50), // Responsive button width
                         ),
                         child: _isLoading
-                            ? CircularProgressIndicator(color: Colors.white)
+                            ? SpinKitThreeBounce(color: Colors.green, size: 30.0)  // Show loading spinner when logging in
                             : Text('LOG IN', style: TextStyle(color: Colors.white)),
                       ),
                       SizedBox(height: screenHeight * 0.02), // Dynamic height
-                      
+                       
                       // Forgot Password Link
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
