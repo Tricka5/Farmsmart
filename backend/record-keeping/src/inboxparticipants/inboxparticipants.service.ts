@@ -10,14 +10,12 @@ export class InboxparticipantsService {
 
   
   async addParticipant(data:insertInboxParticipants){
-    console.log('data',data);
     const [inboxParticipant]= await db
       .insert(inboxParticipantsTable)
       .values(data)
       .returning();
       return inboxParticipant;
   }catch(error){
-    console.error('failed creating inbox participants',error);
     throw new InternalServerErrorException('failed creating inbox participants');
   }
 
@@ -43,7 +41,7 @@ export class InboxparticipantsService {
   
       return results.length > 0 ? results : null; // Return null if no results found
     } catch (error) {
-      console.error('Error fetching inbox participants:', error);
+      throw new InternalServerErrorException(error);
       return null; // Handle the error appropriately
     }
   }
@@ -53,7 +51,6 @@ export class InboxparticipantsService {
   
   async getUserFromUsersTable(userids: number[], ): Promise<selectUsers[] | null> {
 
-    console.log('users',userids)
     try {
       const result = await db.query.usersTable.findMany({
         where: (inboxParticipantsTable, { or, eq, not }) => {
@@ -66,10 +63,9 @@ export class InboxparticipantsService {
         },
       });
   
-      console.log('Fetched users for:', result);
       return result; // Return the fetched result
     } catch (error) {
-      console.error('Error fetching users:', error);
+      throw new InternalServerErrorException(error);
       return null; // Optionally handle error scenarios
     }
   }
@@ -89,7 +85,6 @@ export class InboxparticipantsService {
         )
         .execute();
 
-        console.log(result);
   
       if (result.length === 0) {
         throw new NotFoundException(`Inbox not found for users: ${otheruser}, ${currentuser}`);
@@ -97,7 +92,6 @@ export class InboxparticipantsService {
   
       return result[0]; // Return the first result or the entire result based on your requirements
     } catch (error) {
-      console.error('Error fetching inbox for users:', otheruser, currentuser, error);
       throw new InternalServerErrorException('Failed to retrieve inbox');
     }
   }

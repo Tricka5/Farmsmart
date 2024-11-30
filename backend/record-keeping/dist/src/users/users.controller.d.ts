@@ -10,12 +10,12 @@ export declare class UsersController {
     constructor(usersService: UsersService, otpService: OtpService);
     getAllUsers(): Promise<selectUsers[]>;
     getUserById(userid: string): Promise<{
-        password: string;
         userid: number;
         firstname: string;
         lastname: string;
         profilepicture: string;
         email: string;
+        password: string;
         activationstatus: boolean;
     }>;
     sendOtp(email: string): Promise<string>;
@@ -35,12 +35,12 @@ export declare class UsersController {
             access_token: string;
         };
         user: {
-            password: string;
             userid: number;
             firstname: string;
             lastname: string;
             profilepicture: string;
             email: string;
+            password: string;
             activationstatus: boolean;
         };
     }>;

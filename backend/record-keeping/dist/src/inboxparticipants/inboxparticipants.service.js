@@ -13,7 +13,6 @@ const db_1 = require("../db");
 const drizzle_orm_1 = require("drizzle-orm");
 let InboxparticipantsService = class InboxparticipantsService {
     async addParticipant(data) {
-        console.log('data', data);
         const [inboxParticipant] = await db_1.db
             .insert(schema_1.inboxParticipantsTable)
             .values(data)
@@ -21,7 +20,6 @@ let InboxparticipantsService = class InboxparticipantsService {
         return inboxParticipant;
     }
     catch(error) {
-        console.error('failed creating inbox participants', error);
         throw new common_1.InternalServerErrorException('failed creating inbox participants');
     }
     async getInboxParticipant(userId) {
@@ -42,12 +40,11 @@ let InboxparticipantsService = class InboxparticipantsService {
             return results.length > 0 ? results : null;
         }
         catch (error) {
-            console.error('Error fetching inbox participants:', error);
+            throw new common_1.InternalServerErrorException(error);
             return null;
         }
     }
     async getUserFromUsersTable(userids) {
-        console.log('users', userids);
         try {
             const result = await db_1.db.query.usersTable.findMany({
                 where: (inboxParticipantsTable, { or, eq, not }) => {
@@ -56,11 +53,10 @@ let InboxparticipantsService = class InboxparticipantsService {
                     return or(...conditions);
                 },
             });
-            console.log('Fetched users for:', result);
             return result;
         }
         catch (error) {
-            console.error('Error fetching users:', error);
+            throw new common_1.InternalServerErrorException(error);
             return null;
         }
     }
@@ -72,14 +68,12 @@ let InboxparticipantsService = class InboxparticipantsService {
                 .where((0, drizzle_orm_1.sql) `(${schema_1.inboxParticipantsTable.firstuserid} = ${currentuser} AND ${schema_1.inboxParticipantsTable.seconduserid} = ${otheruser})`
                 .append((0, drizzle_orm_1.sql) ` OR (${schema_1.inboxParticipantsTable.firstuserid} = ${otheruser} AND ${schema_1.inboxParticipantsTable.seconduserid} = ${currentuser})`))
                 .execute();
-            console.log(result);
             if (result.length === 0) {
                 throw new common_1.NotFoundException(`Inbox not found for users: ${otheruser}, ${currentuser}`);
             }
             return result[0];
         }
         catch (error) {
-            console.error('Error fetching inbox for users:', otheruser, currentuser, error);
             throw new common_1.InternalServerErrorException('Failed to retrieve inbox');
         }
     }

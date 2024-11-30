@@ -4,8 +4,8 @@ export declare class MessageController {
     private readonly messageService;
     constructor(messageService: MessageService);
     createMessage(CreateMessageDto: insertMessages): Promise<{
-        userid: number;
         inboxid: number;
+        userid: number;
         message: string;
         createdat: Date;
     }>;

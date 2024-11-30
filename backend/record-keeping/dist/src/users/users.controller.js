@@ -60,7 +60,6 @@ let UsersController = class UsersController {
         const result = await this.usersService.getAuthenticatedUser(email, password);
         const user = await this.usersService.getUserByEmail(email);
         const damdata = { result, user };
-        console.log(damdata);
         return { result, user };
     }
     getProfile(req) {
@@ -69,39 +68,30 @@ let UsersController = class UsersController {
     async updateFirstName(updateFirstNameDto) {
         try {
             const { email, firstname } = updateFirstNameDto;
-            console.log(`Updating first name for ${email} to ${firstname}`);
-            console.log('dto', updateFirstNameDto);
             const result = await this.usersService.updateFirstName(updateFirstNameDto.email, updateFirstNameDto.firstname);
             return result;
         }
         catch (error) {
-            console.error('Error updating first name:', error);
             throw new Error('Failed to update first name. Please try again later.');
         }
     }
     async updateLastName(updateFirstNameDto) {
         try {
             const { email, lastname } = updateFirstNameDto;
-            console.log(`Updating lastname name for ${email} to ${lastname}`);
-            console.log('dto', updateFirstNameDto);
             const result = await this.usersService.updateLastName(updateFirstNameDto.email, updateFirstNameDto.lastname);
             return result;
         }
         catch (error) {
-            console.error('Error updating last name:', error);
             throw new Error('Failed to update lastname name. Please try again later.');
         }
     }
     async updateProfilepicture(updateFirstNameDto) {
         try {
             const { email, profilePicture } = updateFirstNameDto;
-            console.log(`Updating profile for ${email} to ${profilePicture}`);
-            console.log('dto', updateFirstNameDto);
             const result = await this.usersService.updateProfilePicture(updateFirstNameDto.email, updateFirstNameDto.profilePicture);
             return result;
         }
         catch (error) {
-            console.error('Error updating profile picture:', error);
             throw new Error('Failed to update profile. Please try again later.');
         }
     }

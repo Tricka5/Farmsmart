@@ -1,12 +1,15 @@
 // src/websocket/websocket.gateway.ts
+import { OnModuleInit } from '@nestjs/common';
 import {
     WebSocketGateway,
     SubscribeMessage,
     MessageBody,
     OnGatewayConnection,
     OnGatewayDisconnect,
+    WebSocketServer,
   } from '@nestjs/websockets';
   import { Socket } from 'socket.io';
+  import {Server} from 'socket.io';
   
   @WebSocketGateway({
     cors: {
@@ -14,7 +17,7 @@ import {
     },
   })
   export class WebSocketGatewayService
-    implements OnGatewayConnection, OnGatewayDisconnect
+    implements OnGatewayConnection, OnGatewayDisconnect,OnModuleInit
   {
     private clients: Set<Socket> = new Set();
   
@@ -29,6 +32,15 @@ import {
       this.clients.delete(client);
       console.log(`Client disconnected: ${client.id}`);
     }
+
+    @WebSocketServer()
+    server:Server;
+    onModuleInit() {
+        this.server.on('connection',(socket)=>{
+            console.log(socket.id);
+            console.log('connected');
+        })
+    }
   
     // Emit message to all connected clients
     @SubscribeMessage('triggerRefresh')
@@ -37,7 +49,7 @@ import {
   
       // Emit refresh event to all connected clients
       this.clients.forEach((client) => {
-        client.emit('refresh', { message: 'Data has been updated!' });
+        client.emit('refresh', { message: data });
       });
     }
   }

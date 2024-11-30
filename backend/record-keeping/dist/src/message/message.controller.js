@@ -24,11 +24,9 @@ let MessageController = class MessageController {
         return result;
     }
     catch(error) {
-        console.error('erro sending message', error);
         throw new common_1.HttpException('failed to send message', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
     }
     async getMessagesByInboxId(id) {
-        console.log('yebo');
         return await this.messageService.getMessagesByInboxId(id);
     }
 };

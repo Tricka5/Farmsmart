@@ -14,14 +14,12 @@ export class MessageController {
     return result;
   }
   catch(error){
-    console.error('erro sending message',error);
     throw new HttpException('failed to send message',HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
  
   @Get(':id/message')
   async getMessagesByInboxId(@Param('id') id:number):Promise<selectMessages[]>{
-    console.log('yebo');
     return await this.messageService.getMessagesByInboxId(id);
   }
 

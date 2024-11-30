@@ -20,7 +20,6 @@ let MessageService = class MessageService {
         return message;
     }
     catch(error) {
-        console.error('failed to send message', error);
         throw new common_1.InternalServerErrorException('failed to send message');
     }
     async getMessagesByInboxId(id) {

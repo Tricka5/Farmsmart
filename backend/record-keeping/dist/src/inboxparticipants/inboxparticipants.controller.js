@@ -28,7 +28,6 @@ let InboxparticipantsController = class InboxparticipantsController {
         return user;
     }
     async getFriends(currentuserid) {
-        console.log(currentuserid[0]);
         const users = await this.inboxparticipantsService.getFriends(currentuserid);
         return users;
     }
@@ -43,7 +42,6 @@ let InboxparticipantsController = class InboxparticipantsController {
         return users;
     }
     async getCurrentInbox(params) {
-        console.log('happy!!!!!', params);
         try {
             const { otheruser, currentuser } = params;
             return await this.inboxparticipantsService.getCurrentInbox(otheruser, currentuser);

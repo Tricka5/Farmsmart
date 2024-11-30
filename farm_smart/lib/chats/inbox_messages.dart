@@ -2,14 +2,13 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_spinkit/flutter_spinkit.dart'; // Add the import here
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Chills extends StatefulWidget {
   final String userId;
   final String myUserId;
-  final String firstName; // Add this
-  final String lastName;  // Add this
+  final String firstName;
+  final String lastName;
 
   const Chills({super.key, required this.userId, required this.myUserId, required this.firstName, required this.lastName});
 
@@ -34,20 +33,24 @@ class _ChillsState extends State<Chills> {
     thisChatInboxFuture = _fetchCommonInboxData();
 
     // Initialize WebSocket connection
-    socket = IO.io('http://<your-nestjs-server-url>:3000', <String, dynamic>{
+    socket = IO.io('https://farmsmart-0yqz.onrender.com', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
     });
 
     socket.connect();
 
-    // Listen for refresh event from the WebSocket server
-    socket.on('refresh', (data) {
-      print('Received refresh event: ${data['message']}');
-      // Handle the refresh event, e.g., by fetching new messages
+    // Listen for new messages from WebSocket server
+    socket.on('newMessage', (data) {
+      print('Received new message: ${data['message']}');
+
+      // Add new message to currentMessages and update UI
       setState(() {
-        _fetchMessages();  // Fetch messages again or refresh UI
+        currentMessages.add(data); // Append the new message
       });
+
+      // Optionally scroll to the bottom when a new message arrives
+      _scrollToBottom();
     });
   }
 
@@ -55,13 +58,12 @@ class _ChillsState extends State<Chills> {
   Future<Map<String, dynamic>> _fetchCommonInboxData() async {
     try {
       final response = await http.get(
-        Uri.parse(
-            'https://farmsmart-0yqz.onrender.com/inboxparticipants/currentinbox/${widget.userId}/${widget.myUserId}'),
+        Uri.parse('https://farmsmart-0yqz.onrender.com/inboxparticipants/currentinbox/${widget.userId}/${widget.myUserId}'),
       );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print(data); // This will print the whole data to the console
+        print(data);
 
         if (data.isNotEmpty) {
           return {'inboxid': data['inboxid']};
@@ -103,7 +105,7 @@ class _ChillsState extends State<Chills> {
     };
 
     setState(() {
-      currentMessages.add(newMessage);
+      currentMessages.add(newMessage); // Add message locally to the list
       isSending = true;
     });
 
@@ -114,17 +116,15 @@ class _ChillsState extends State<Chills> {
     };
 
     try {
-      final response = await http
-          .post(
-            Uri.parse('https://farmsmart-0yqz.onrender.com/message/send'),
-            headers: {'Content-Type': 'application/json'},
-            body: json.encode(requestData),
-          )
-          .timeout(Duration(seconds: 10));
+      final response = await http.post(
+        Uri.parse('https://farmsmart-0yqz.onrender.com/message/send'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(requestData),
+      ).timeout(Duration(seconds: 20));
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // Emit the new message through WebSocket to notify other clients
-        socket.emit('newMessage', requestData); // Emit the message to WebSocket
+        // Emit the new message via WebSocket to notify other clients
+        socket.emit('newMessage', requestData);
       } else {
         throw Exception('Failed to send message');
       }
@@ -172,7 +172,7 @@ class _ChillsState extends State<Chills> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '${widget.firstName} ${widget.lastName}', // Display full name
+          '${widget.firstName} ${widget.lastName}',
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
@@ -183,10 +183,10 @@ class _ChillsState extends State<Chills> {
         future: thisChatInboxFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
+            // Show the spinner only while fetching inbox data
             return Center(
-              child: SpinKitThreeBounce(
+              child: CircularProgressIndicator(
                 color: Colors.green, // Customize the spinner color
-                size: 50.0,           // Customize the size of the spinner
               ),
             );
           } else if (snapshot.hasError) {
@@ -200,11 +200,11 @@ class _ChillsState extends State<Chills> {
             return FutureBuilder<List<dynamic>>(
               future: _fetchMessages(),
               builder: (context, messageSnapshot) {
-                if (messageSnapshot.connectionState == ConnectionState.waiting) {
+                if (messageSnapshot.connectionState == ConnectionState.waiting && currentMessages.isEmpty) {
+                  // Show the spinner only while fetching initial messages
                   return Center(
-                    child: SpinKitThreeBounce(
-                      color: Colors.green, // Customize the spinner color
-                      size: 50.0,           // Customize the size of the spinner
+                    child: CircularProgressIndicator(
+                      color: Colors.green,
                     ),
                   );
                 } else if (messageSnapshot.hasError) {
@@ -290,21 +290,9 @@ class _ChillsState extends State<Chills> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  messageText,
-                  style: TextStyle(
-                    color: isCurrentUser ? Colors.black : Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
+                Text(messageText, style: TextStyle(color: isCurrentUser ? Colors.black : Colors.white, fontSize: 16)),
                 SizedBox(height: 5),
-                Text(
-                  time,
-                  style: TextStyle(
-                    color: isCurrentUser ? Colors.green : Colors.white,
-                    fontSize: 12,
-                  ),
-                ),
+                Text(time, style: TextStyle(color: isCurrentUser ? Colors.green : Colors.white, fontSize: 12)),
               ],
             ),
           ),

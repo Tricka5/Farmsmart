@@ -99,7 +99,6 @@ export class UsersController {
 
     const user=await this.usersService.getUserByEmail(email);
     const damdata={result,user}
-    console.log(damdata);
     return {result,user};
   }
 
@@ -115,10 +114,7 @@ export class UsersController {
   async updateFirstName(@Body() updateFirstNameDto: FirstNameDto) {
     try {
       const { email, firstname } = updateFirstNameDto;
-      // Log input for debugging (can be enhanced with a proper logger)
-      console.log(`Updating first name for ${email} to ${firstname}`);
       
-      console.log('dto',updateFirstNameDto)
       // Call the service to update the first name
       const result = await this.usersService.updateFirstName(updateFirstNameDto.email, updateFirstNameDto.firstname);
       
@@ -126,7 +122,6 @@ export class UsersController {
       return result;
     } catch (error) {
       // Handle errors
-      console.error('Error updating first name:', error);
       throw new Error('Failed to update first name. Please try again later.');
     }
   }
@@ -136,9 +131,7 @@ export class UsersController {
     try {
       const { email, lastname } = updateFirstNameDto;
       // Log input for debugging (can be enhanced with a proper logger)
-      console.log(`Updating lastname name for ${email} to ${lastname}`);
       
-      console.log('dto',updateFirstNameDto)
       // Call the service to update the first name
       const result = await this.usersService.updateLastName(updateFirstNameDto.email, updateFirstNameDto.lastname);
       
@@ -146,7 +139,6 @@ export class UsersController {
       return result;
     } catch (error) {
       // Handle errors
-      console.error('Error updating last name:', error);
       throw new Error('Failed to update lastname name. Please try again later.');
     }
   }
@@ -155,18 +147,12 @@ export class UsersController {
   async updateProfilepicture(@Body() updateFirstNameDto: profilePictureNameDto) {
     try {
       const { email, profilePicture } = updateFirstNameDto;
-      // Log input for debugging (can be enhanced with a proper logger)
-      console.log(`Updating profile for ${email} to ${profilePicture}`);
-      
-      console.log('dto',updateFirstNameDto)
-      // Call the service to update the first name
       const result = await this.usersService.updateProfilePicture(updateFirstNameDto.email, updateFirstNameDto.profilePicture);
       
       // Return the result from the service
       return result;
     } catch (error) {
       // Handle errors
-      console.error('Error updating profile picture:', error);
       throw new Error('Failed to update profile. Please try again later.');
     }
   }

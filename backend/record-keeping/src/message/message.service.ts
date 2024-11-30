@@ -14,7 +14,6 @@ async addMessage(data:insertMessages){
     .returning()
   return message
 }catch(error){
-  console.error('failed to send message',error);
   throw new InternalServerErrorException('failed to send message');
 }
 

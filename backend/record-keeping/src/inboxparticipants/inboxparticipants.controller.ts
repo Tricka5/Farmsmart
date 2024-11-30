@@ -21,7 +21,6 @@ export class InboxparticipantsController {
 
   @Get(':currentuserid/friends')
   async getFriends(@Param() currentuserid:number){
-    console.log(currentuserid[0]);
     
     const users=await this.inboxparticipantsService.getFriends(currentuserid)
     return users
@@ -55,7 +54,6 @@ export class InboxparticipantsController {
   
 @Get('currentinbox/:otheruser/:currentuser')
 async getCurrentInbox(@Param() params: any) {
-  console.log('happy!!!!!', params);
   try {
     // Destructure properties directly from the params
     const { otheruser, currentuser } = params;
