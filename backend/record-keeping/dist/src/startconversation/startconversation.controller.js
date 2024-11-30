@@ -24,23 +24,18 @@ let StartConversaation = class StartConversaation {
     }
     async startCoversation(userData) {
         console.log('firstly', userData);
-        const { first_userid, second_userid } = userData;
+        const { firstuserid, seconduserid } = userData;
         try {
-            const result = await this.inboxService.createEntry(first_userid);
+            const result = await this.inboxService.createEntry(firstuserid);
             const { inboxid: inboxid, lastmessage: last_message } = result;
             const firstInboxParticipant = {
-                userid: first_userid,
+                firstuserid,
+                seconduserid,
                 inboxid,
             };
             const AddFirstParticipant = await this.inboxParticipantsService.addParticipant(firstInboxParticipant);
-            const secondInboxParticipant = {
-                userid: second_userid,
-                inboxid,
-            };
-            const AddSecondParticipantt = await this.inboxParticipantsService.addParticipant(secondInboxParticipant);
             return {
                 AddFirstParticipant,
-                AddSecondParticipantt,
             };
         }
         catch (error) {
@@ -58,7 +53,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], StartConversaation.prototype, "startCoversation", null);
 exports.StartConversaation = StartConversaation = __decorate([
-    (0, common_1.Controller)('creatingnewconversation'),
+    (0, common_1.Controller)('creatingnewconversatio'),
     __metadata("design:paramtypes", [inboxparticipants_service_1.InboxparticipantsService,
         inbox_service_1.InboxService])
 ], StartConversaation);

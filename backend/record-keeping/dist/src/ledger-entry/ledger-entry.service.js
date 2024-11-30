@@ -36,8 +36,7 @@ let LedgerAccountEntryService = class LedgerAccountEntryService {
             const entries = await db_1.db
                 .select()
                 .from(schema_1.ledgerAccountEntry)
-                .where((0, drizzle_orm_1.eq)(schema_1.ledgerAccountEntry.ledgerAccountid, ledgerAccountId))
-                .groupBy(schema_1.ledgerAccountEntry.type);
+                .where((0, drizzle_orm_1.eq)(schema_1.ledgerAccountEntry.ledgerAccountid, ledgerAccountId));
             return entries;
         }
         catch (error) {

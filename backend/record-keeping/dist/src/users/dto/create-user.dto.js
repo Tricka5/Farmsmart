@@ -17,9 +17,9 @@ exports.CreateUserDto = CreateUserDto;
 __decorate([
     (0, class_validator_1.IsInt)(),
     __metadata("design:type", Number)
-], CreateUserDto.prototype, "first_userid", void 0);
+], CreateUserDto.prototype, "firstuserid", void 0);
 __decorate([
     (0, class_validator_1.IsInt)(),
     __metadata("design:type", Number)
-], CreateUserDto.prototype, "second_userid", void 0);
+], CreateUserDto.prototype, "seconduserid", void 0);
 //# sourceMappingURL=create-user.dto.js.map

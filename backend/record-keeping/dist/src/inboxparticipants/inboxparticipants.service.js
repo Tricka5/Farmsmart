@@ -13,6 +13,7 @@ const db_1 = require("../db");
 const drizzle_orm_1 = require("drizzle-orm");
 let InboxparticipantsService = class InboxparticipantsService {
     async addParticipant(data) {
+        console.log('data', data);
         const [inboxParticipant] = await db_1.db
             .insert(schema_1.inboxParticipantsTable)
             .values(data)
@@ -27,7 +28,7 @@ let InboxparticipantsService = class InboxparticipantsService {
         const [inboxparticipant] = await db_1.db
             .select()
             .from(schema_1.inboxParticipantsTable)
-            .where((0, drizzle_orm_1.eq)(schema_1.inboxParticipantsTable.userid, userId))
+            .where((0, drizzle_orm_1.eq)(schema_1.inboxParticipantsTable.firstuserid, userId))
             .execute();
         return inboxparticipant || null;
     }
@@ -36,7 +37,7 @@ let InboxparticipantsService = class InboxparticipantsService {
             const results = await db_1.db
                 .select()
                 .from(schema_1.inboxParticipantsTable)
-                .where((0, drizzle_orm_1.sql) `${schema_1.inboxParticipantsTable.userid} IN (${drizzle_orm_1.sql.join(ids, ',')})`)
+                .where((0, drizzle_orm_1.sql) `${schema_1.inboxParticipantsTable.firstuserid} IN (${drizzle_orm_1.sql.join(ids, ',')})`)
                 .execute();
             return results.length > 0 ? results : null;
         }
@@ -45,32 +46,12 @@ let InboxparticipantsService = class InboxparticipantsService {
             return null;
         }
     }
-    async getUsers(ids) {
-        console.log('I am in service', ids);
-        if (ids.length === 0) {
-            return null;
-        }
-        try {
-            const result = await db_1.db.query.inboxParticipantsTable.findMany({
-                where: (inboxParticipantsTable, { or, eq }) => {
-                    const conditions = ids.map(id => eq(inboxParticipantsTable.inboxid, id));
-                    return or(...conditions);
-                },
-            });
-            console.log('Fetched result:', result);
-            return result;
-        }
-        catch (error) {
-            console.error('Error fetching users:', error);
-            return null;
-        }
-    }
-    async getUserFromUsersTable(userids, userIdCurrent) {
+    async getUserFromUsersTable(userids) {
+        console.log('users', userids);
         try {
             const result = await db_1.db.query.usersTable.findMany({
                 where: (inboxParticipantsTable, { or, eq, not }) => {
                     const conditions = userids
-                        .filter(id => id !== userIdCurrent)
                         .map(id => eq(schema_1.usersTable.userid, id));
                     return or(...conditions);
                 },
@@ -84,24 +65,31 @@ let InboxparticipantsService = class InboxparticipantsService {
         }
     }
     async getCurrentInbox(otheruser, currentuser) {
-        const users = [otheruser, currentuser];
         try {
             const result = await db_1.db
                 .select({ inboxid: schema_1.inboxParticipantsTable.inboxid })
                 .from(schema_1.inboxParticipantsTable)
-                .where((0, drizzle_orm_1.inArray)(schema_1.inboxParticipantsTable.userid, users))
-                .groupBy(schema_1.inboxParticipantsTable.inboxid)
-                .having((0, drizzle_orm_1.sql) `${(0, drizzle_orm_1.countDistinct)(schema_1.inboxParticipantsTable.userid)} = ${users.length}`)
+                .where((0, drizzle_orm_1.sql) `(${schema_1.inboxParticipantsTable.firstuserid} = ${currentuser} AND ${schema_1.inboxParticipantsTable.seconduserid} = ${otheruser})`
+                .append((0, drizzle_orm_1.sql) ` OR (${schema_1.inboxParticipantsTable.firstuserid} = ${otheruser} AND ${schema_1.inboxParticipantsTable.seconduserid} = ${currentuser})`))
                 .execute();
+            console.log(result);
             if (result.length === 0) {
                 throw new common_1.NotFoundException(`Inbox not found for users: ${otheruser}, ${currentuser}`);
             }
-            return result;
+            return result[0];
         }
         catch (error) {
             console.error('Error fetching inbox for users:', otheruser, currentuser, error);
             throw new common_1.InternalServerErrorException('Failed to retrieve inbox');
         }
+    }
+    async getFriends(id) {
+        const result = await db_1.db
+            .select({ secondinboxid: schema_1.inboxParticipantsTable.seconduserid })
+            .from(schema_1.inboxParticipantsTable)
+            .where((0, drizzle_orm_1.eq)(schema_1.inboxParticipantsTable.firstuserid, id))
+            .execute();
+        return result;
     }
 };
 exports.InboxparticipantsService = InboxparticipantsService;

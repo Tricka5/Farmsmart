@@ -1,4 +1,4 @@
 export declare class CreateUserDto {
-    first_userid: number;
-    second_userid: number;
+    firstuserid: number;
+    seconduserid: number;
 }

@@ -8,7 +8,8 @@ import {
   UseGuards,
   Request,
   HttpException,
-  HttpStatus
+  HttpStatus,
+  Put
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { selectUsers, usersTable } from 'src/db/schema';
@@ -16,6 +17,9 @@ import { db } from 'src/db';
 import { AuthGuard } from './auth.guard';
 import { createUserDtotwo } from './dto/createUserDtotwo.dto';
 import { OtpService } from 'src/otp/otp.service';
+import { FirstNameDto } from './dto/updateFirstName.dto';
+import { lastNameDto } from './dto/updateLastName.dto';
+import { profilePictureNameDto } from './dto/updateProfilePicture.dto';
 
 // Controller to manage both OTP and user-related operations
 @Controller('users')
@@ -92,7 +96,11 @@ export class UsersController {
 
     // Authenticate user and return JWT token
     const result = await this.usersService.getAuthenticatedUser(email, password);
-    return result;
+
+    const user=await this.usersService.getUserByEmail(email);
+    const damdata={result,user}
+    console.log(damdata);
+    return {result,user};
   }
 
   // Endpoint to get the authenticated user's profile (Requires JWT token)
@@ -100,5 +108,66 @@ export class UsersController {
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
+  }
+
+
+   @Put('updatefirstname')
+  async updateFirstName(@Body() updateFirstNameDto: FirstNameDto) {
+    try {
+      const { email, firstname } = updateFirstNameDto;
+      // Log input for debugging (can be enhanced with a proper logger)
+      console.log(`Updating first name for ${email} to ${firstname}`);
+      
+      console.log('dto',updateFirstNameDto)
+      // Call the service to update the first name
+      const result = await this.usersService.updateFirstName(updateFirstNameDto.email, updateFirstNameDto.firstname);
+      
+      // Return the result from the service
+      return result;
+    } catch (error) {
+      // Handle errors
+      console.error('Error updating first name:', error);
+      throw new Error('Failed to update first name. Please try again later.');
+    }
+  }
+
+  @Put('updatelastname')
+  async updateLastName(@Body() updateFirstNameDto: lastNameDto) {
+    try {
+      const { email, lastname } = updateFirstNameDto;
+      // Log input for debugging (can be enhanced with a proper logger)
+      console.log(`Updating lastname name for ${email} to ${lastname}`);
+      
+      console.log('dto',updateFirstNameDto)
+      // Call the service to update the first name
+      const result = await this.usersService.updateLastName(updateFirstNameDto.email, updateFirstNameDto.lastname);
+      
+      // Return the result from the service
+      return result;
+    } catch (error) {
+      // Handle errors
+      console.error('Error updating last name:', error);
+      throw new Error('Failed to update lastname name. Please try again later.');
+    }
+  }
+
+  @Put('updateprofilepicture')
+  async updateProfilepicture(@Body() updateFirstNameDto: profilePictureNameDto) {
+    try {
+      const { email, profilePicture } = updateFirstNameDto;
+      // Log input for debugging (can be enhanced with a proper logger)
+      console.log(`Updating profile for ${email} to ${profilePicture}`);
+      
+      console.log('dto',updateFirstNameDto)
+      // Call the service to update the first name
+      const result = await this.usersService.updateProfilePicture(updateFirstNameDto.email, updateFirstNameDto.profilePicture);
+      
+      // Return the result from the service
+      return result;
+    } catch (error) {
+      // Handle errors
+      console.error('Error updating profile picture:', error);
+      throw new Error('Failed to update profile. Please try again later.');
+    }
   }
 }

@@ -17,6 +17,9 @@ const common_1 = require("@nestjs/common");
 const users_service_1 = require("./users.service");
 const auth_guard_1 = require("./auth.guard");
 const otp_service_1 = require("../otp/otp.service");
+const updateFirstName_dto_1 = require("./dto/updateFirstName.dto");
+const updateLastName_dto_1 = require("./dto/updateLastName.dto");
+const updateProfilePicture_dto_1 = require("./dto/updateProfilePicture.dto");
 let UsersController = class UsersController {
     constructor(usersService, otpService) {
         this.usersService = usersService;
@@ -55,10 +58,52 @@ let UsersController = class UsersController {
         console.log('Login attempt for:', LoginDto.email);
         const { email, password } = LoginDto;
         const result = await this.usersService.getAuthenticatedUser(email, password);
-        return result;
+        const user = await this.usersService.getUserByEmail(email);
+        const damdata = { result, user };
+        console.log(damdata);
+        return { result, user };
     }
     getProfile(req) {
         return req.user;
+    }
+    async updateFirstName(updateFirstNameDto) {
+        try {
+            const { email, firstname } = updateFirstNameDto;
+            console.log(`Updating first name for ${email} to ${firstname}`);
+            console.log('dto', updateFirstNameDto);
+            const result = await this.usersService.updateFirstName(updateFirstNameDto.email, updateFirstNameDto.firstname);
+            return result;
+        }
+        catch (error) {
+            console.error('Error updating first name:', error);
+            throw new Error('Failed to update first name. Please try again later.');
+        }
+    }
+    async updateLastName(updateFirstNameDto) {
+        try {
+            const { email, lastname } = updateFirstNameDto;
+            console.log(`Updating lastname name for ${email} to ${lastname}`);
+            console.log('dto', updateFirstNameDto);
+            const result = await this.usersService.updateLastName(updateFirstNameDto.email, updateFirstNameDto.lastname);
+            return result;
+        }
+        catch (error) {
+            console.error('Error updating last name:', error);
+            throw new Error('Failed to update lastname name. Please try again later.');
+        }
+    }
+    async updateProfilepicture(updateFirstNameDto) {
+        try {
+            const { email, profilePicture } = updateFirstNameDto;
+            console.log(`Updating profile for ${email} to ${profilePicture}`);
+            console.log('dto', updateFirstNameDto);
+            const result = await this.usersService.updateProfilePicture(updateFirstNameDto.email, updateFirstNameDto.profilePicture);
+            return result;
+        }
+        catch (error) {
+            console.error('Error updating profile picture:', error);
+            throw new Error('Failed to update profile. Please try again later.');
+        }
     }
 };
 exports.UsersController = UsersController;
@@ -112,6 +157,27 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "getProfile", null);
+__decorate([
+    (0, common_1.Put)('updatefirstname'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [updateFirstName_dto_1.FirstNameDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateFirstName", null);
+__decorate([
+    (0, common_1.Put)('updatelastname'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [updateLastName_dto_1.lastNameDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateLastName", null);
+__decorate([
+    (0, common_1.Put)('updateprofilepicture'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [updateProfilePicture_dto_1.profilePictureNameDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateProfilepicture", null);
 exports.UsersController = UsersController = __decorate([
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService,

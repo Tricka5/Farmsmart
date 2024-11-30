@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ledgerAccountEntry = exports.ledgerAccount = exports.cashBookTable = exports.inboxParticipantsTable = exports.messagesTable = exports.inboxTable = exports.usersTable = void 0;
+exports.livestock_record = exports.crop_record = exports.livestock = exports.crop = exports.ledgerAccountEntry = exports.ledgerAccount = exports.cashBookTable = exports.inboxParticipantsTable = exports.messagesTable = exports.inboxTable = exports.usersTable = void 0;
 require("dotenv/config");
 const pg_core_1 = require("drizzle-orm/pg-core");
 exports.usersTable = (0, pg_core_1.pgTable)('users', {
     userid: (0, pg_core_1.serial)('userid').primaryKey(),
     firstname: (0, pg_core_1.text)('firstname').notNull(),
     lastname: (0, pg_core_1.text)('lastname').notNull(),
-    profilepicture: (0, pg_core_1.text)('profilepicture'),
+    profilepicture: (0, pg_core_1.text)('profilepicture').notNull(),
     email: (0, pg_core_1.text)('email').unique(),
     password: (0, pg_core_1.text)('password').notNull(),
     activationstatus: (0, pg_core_1.boolean)('activationstatus').notNull(),
@@ -27,7 +27,10 @@ exports.messagesTable = (0, pg_core_1.pgTable)('messages', {
     createdat: (0, pg_core_1.timestamp)('createdat').defaultNow(),
 });
 exports.inboxParticipantsTable = (0, pg_core_1.pgTable)('inboxparticipants', {
-    userid: (0, pg_core_1.integer)('userid')
+    firstuserid: (0, pg_core_1.integer)('userid')
+        .notNull()
+        .references(() => exports.usersTable.userid, { onDelete: 'cascade' }),
+    seconduserid: (0, pg_core_1.integer)('currentuser')
         .notNull()
         .references(() => exports.usersTable.userid, { onDelete: 'cascade' }),
     inboxid: (0, pg_core_1.integer)('inboxid')
@@ -35,7 +38,7 @@ exports.inboxParticipantsTable = (0, pg_core_1.pgTable)('inboxparticipants', {
         .references(() => exports.inboxTable.inboxid, { onDelete: 'cascade' }),
 }, (table) => {
     return {
-        pk: (0, pg_core_1.primaryKey)({ columns: [table.userid, table.inboxid] }),
+        pk: (0, pg_core_1.primaryKey)({ columns: [table.firstuserid, table.seconduserid] }),
     };
 });
 exports.cashBookTable = (0, pg_core_1.pgTable)('cash_book', {
@@ -63,5 +66,30 @@ exports.ledgerAccountEntry = (0, pg_core_1.pgTable)('legderAccountEntry', {
     ledgerAccountid: (0, pg_core_1.integer)('ledgerAccountId')
         .notNull()
         .references(() => exports.ledgerAccount.ledgerAccountid, { onDelete: 'cascade' }),
+});
+exports.crop = (0, pg_core_1.pgTable)('crop', {
+    cropid: (0, pg_core_1.serial)('cropid').primaryKey(),
+    name: (0, pg_core_1.text)('name').notNull(),
+    quality: (0, pg_core_1.text)('quality').notNull(),
+    status: (0, pg_core_1.text)('status').notNull(),
+});
+exports.livestock = (0, pg_core_1.pgTable)('livestock', {
+    livestockid: (0, pg_core_1.serial)('livestockid').primaryKey(),
+    breed: (0, pg_core_1.text)('breed').notNull(),
+    age: (0, pg_core_1.integer)('age').notNull(),
+    quantity: (0, pg_core_1.integer)('quantity').notNull(),
+    healthy_status: (0, pg_core_1.text)('healthy_status').notNull(),
+});
+exports.crop_record = (0, pg_core_1.pgTable)('crop_record', {
+    crop_record_id: (0, pg_core_1.serial)('crop_record_id').primaryKey(),
+    data: (0, pg_core_1.text)('data'),
+    activity: (0, pg_core_1.text)('activity'),
+    notes: (0, pg_core_1.text)('notes'),
+});
+exports.livestock_record = (0, pg_core_1.pgTable)('livestock_record', {
+    livestock_record_id: (0, pg_core_1.serial)('livestock_record_id').primaryKey(),
+    data: (0, pg_core_1.text)('data'),
+    activity: (0, pg_core_1.text)('activity'),
+    notes: (0, pg_core_1.text)('notes'),
 });
 //# sourceMappingURL=schema.js.map

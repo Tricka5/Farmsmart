@@ -29,7 +29,11 @@ export class LedgerAccountEntryController {
   @Get('getall/:ledgerAccountId')
   async getAllLedgerEntries(@Param('ledgerAccountId') ledgerAccountId: string) {
     try {
+      console.log("hi1");
+
       const entries = await this.ledgerAccountEntryService.findAll(ledgerAccountId);
+      
+      console.log("hi2");
       return {
         message: 'Ledger account entries fetched successfully',
         data: entries

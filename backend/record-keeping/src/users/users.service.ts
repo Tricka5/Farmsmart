@@ -157,5 +157,94 @@ async updateActivationStatusByEmail(email: string, activationStatus: boolean): P
   }
 }
 
+async updateFirstName(email: string, firstname: string) {
+  try {
+    // Check if the email and name are valid (optional validation)
+
+
+    if (!email || !firstname) {
+      throw new Error('Invalid input data');
+    }
+    console.log('chec',email,firstname);
+
+    // Perform the update operation
+    const result = await db
+      .update(usersTable)
+      .set({ firstname: firstname })
+      .where(eq(usersTable.email, email));
+
+    // Check if any rows were updated (if result is empty, no matching user was found)
+    if (result.count === 0) {
+      throw new Error(`No user found with the email: ${email}`);
+    }
+
+    // Return a success message with the updated data
+    return { message: 'First name updated successfully', updatedRows: result.count };
+  } catch (error) {
+    // Log the error and throw a more user-friendly error
+    console.error('Error updating first name:', error);
+    throw new Error('Failed to update first name. Please try again later.');
+  }
+}
+
+async updateLastName(email: string, lastname: string) {
+  try {
+    // Check if the email and name are valid (optional validation)
+
+
+    if (!email || !lastname) {
+      throw new Error('Invalid input data');
+    }
+    console.log('chec',email,lastname);
+
+    // Perform the update operation
+    const result = await db
+      .update(usersTable)
+      .set({ lastname: lastname })
+      .where(eq(usersTable.email, email));
+
+    // Check if any rows were updated (if result is empty, no matching user was found)
+    if (result.count === 0) {
+      throw new Error(`No user found with the email: ${email}`);
+    }
+
+    // Return a success message with the updated data
+    return { message: 'last name updated successfully', updatedRows: result.count };
+  } catch (error) {
+    // Log the error and throw a more user-friendly error
+    console.error('Error updating lst name:', error);
+    throw new Error('Failed to update last name. Please try again later.');
+  }
+}
+
+async updateProfilePicture(email: string, profilepicture: string) {
+  try {
+    // Check if the email and name are valid (optional validation)
+
+
+    if (!email || !profilepicture) {
+      throw new Error('Invalid input data');
+    }
+    console.log('chec',email,profilepicture);
+
+    // Perform the update operation
+    const result = await db
+      .update(usersTable)
+      .set({ profilepicture: profilepicture })
+      .where(eq(usersTable.email, email));
+
+    // Check if any rows were updated (if result is empty, no matching user was found)
+    if (result.count === 0) {
+      throw new Error(`No user found with the email: ${email}`);
+    }
+
+    // Return a success message with the updated data
+    return { message: ' updated successfully', updatedRows: result.count };
+  } catch (error) {
+    // Log the error and throw a more user-friendly error
+    console.error('Error updating :', error);
+    throw new Error('Failed to update . Please try again later.');
+  }
+}
 
 }

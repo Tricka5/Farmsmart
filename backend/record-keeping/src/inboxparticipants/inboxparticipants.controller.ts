@@ -18,8 +18,19 @@ export class InboxparticipantsController {
     }
     return user;
   }
+
+  @Get(':currentuserid/friends')
+  async getFriends(@Param() currentuserid:number){
+    console.log(currentuserid[0]);
+    
+    const users=await this.inboxparticipantsService.getFriends(currentuserid)
+    return users
+  }
+
+
+
   @Get(':id/chat')
-  async getAllUsers(@Param('id') id: string): Promise<selectUsers[]> {
+  async getAllUsers(@Param('id') id: string){
     const userIdCurrent = parseInt(id, 10);
 
 
@@ -29,37 +40,19 @@ export class InboxparticipantsController {
       throw new BadRequestException('Invalid user ID'); // Handle invalid ID
     }
     //fetching inboxes of current users
-    const result= await this.inboxparticipantsService.getAllinbox([userIdCurrent]); // Pass as an array
+    const result= await this.inboxparticipantsService.getFriends(userIdCurrent); // Pass as an array
+    
+    const data = result.map(item => item.secondinboxid);
 
-    console.log(result);
 
-    const inboxIds = result.map(({ inboxid }) => inboxid);
-    console.log('inboxid',inboxIds); // This will give you an array of inbox IDs that the current user participates in
-
-    //this should have the users related with the current user i.e that have the same inbox id
-    const related_users= await this.inboxparticipantsService.getUsers(inboxIds)
-      //destructure
-
-      const usersFromRelatedUsers = related_users.map(({ userid }) => userid);
+      //const usersFromRelatedUsers = related_users.map(({ firstuserid }) => firstuserid);
     //given related users, we want to fetch from users table
 
-    const users= await this.inboxparticipantsService.getUserFromUsersTable(usersFromRelatedUsers,userIdCurrent);
+    const users= await this.inboxparticipantsService.getUserFromUsersTable(data);
 
-    return users
+    return users;
   }
   
-  @Get(':id/CheckSimilars')
-async getUsersWithSimilarInbox(@Param('id') id: string): Promise<selectInboxParticpants[]> {
-  const userIds = id.split(',').map(Number); // Expecting a comma-separated string of IDs
-
-  // Validate that all parsed IDs are numbers
-  if (userIds.some(isNaN)) {
-    throw new BadRequestException('Invalid user IDs'); // Handle invalid IDs
-  }
-
-  console.log('Received IDs:', userIds);
-  return await this.inboxparticipantsService.getUsers(userIds); // Pass as an array
-}
 @Get('currentinbox/:otheruser/:currentuser')
 async getCurrentInbox(@Param() params: any) {
   console.log('happy!!!!!', params);
@@ -67,7 +60,6 @@ async getCurrentInbox(@Param() params: any) {
     // Destructure properties directly from the params
     const { otheruser, currentuser } = params;
 
-    console.log('Received otheruser:', otheruser, 'Received currentuser:', currentuser);
 
     // Call the service method with destructured variables
     return await this.inboxparticipantsService.getCurrentInbox(otheruser, currentuser);

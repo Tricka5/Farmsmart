@@ -24,12 +24,17 @@ const ledger_entry_module_1 = require("./ledger-entry/ledger-entry.module");
 const email_module_1 = require("./email/email.module");
 const otp_module_1 = require("./otp/otp.module");
 const user_aunthentication_module_1 = require("./user-aunthentication/user-aunthentication.module");
+const crop_record_module_1 = require("./crop-record/crop-record.module");
+const live_stock_module_1 = require("./live-stock/live-stock.module");
+const crop_module_1 = require("./crop/crop.module");
+const live_stock_record_module_1 = require("./live-stock-record/live-stock-record.module");
+const cloudinary_module_1 = require("./cloudinary/cloudinary.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [message_module_1.MessageModule, users_module_1.UsersModule, cash_book_module_1.CashBookModule, inbox_module_1.InboxModule, inboxparticipants_module_1.InboxparticipantsModule, startconversation_module_1.StartconversationModule, ledger_module_1.LedgerModule, ledger_entry_module_1.LedgerEntryModule, email_module_1.EmailModule, otp_module_1.OtpModule, user_aunthentication_module_1.UserAunthenticationModule],
+        imports: [message_module_1.MessageModule, users_module_1.UsersModule, cash_book_module_1.CashBookModule, inbox_module_1.InboxModule, inboxparticipants_module_1.InboxparticipantsModule, startconversation_module_1.StartconversationModule, ledger_module_1.LedgerModule, ledger_entry_module_1.LedgerEntryModule, email_module_1.EmailModule, otp_module_1.OtpModule, user_aunthentication_module_1.UserAunthenticationModule, crop_record_module_1.CropRecordModule, live_stock_module_1.LiveStockModule, crop_module_1.CropModule, live_stock_record_module_1.LiveStockRecordModule, cloudinary_module_1.CloudinaryModule],
         controllers: [app_controller_1.AppController, startcova_controller_1.StartConversaation],
         providers: [app_service_1.AppService, inboxparticipants_service_1.InboxparticipantsService, inbox_service_1.InboxService],
     })

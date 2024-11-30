@@ -1,5 +1,5 @@
 {
-  "id": "b26c2130-6f6a-4bc7-9598-9228fe270f93",
+  "id": "2f0520ba-8881-4781-b2d0-aa1208da050b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -39,12 +39,86 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "public.crop": {
+      "name": "crop",
+      "schema": "",
+      "columns": {
+        "cropid": {
+          "name": "cropid",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quality": {
+          "name": "quality",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.crop_record": {
+      "name": "crop_record",
+      "schema": "",
+      "columns": {
+        "crop_record_id": {
+          "name": "crop_record_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "data": {
+          "name": "data",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "activity": {
+          "name": "activity",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "public.inboxparticipants": {
       "name": "inboxparticipants",
       "schema": "",
       "columns": {
         "userid": {
           "name": "userid",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "currentuser": {
+          "name": "currentuser",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -71,6 +145,19 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
+        "inboxparticipants_currentuser_users_userid_fk": {
+          "name": "inboxparticipants_currentuser_users_userid_fk",
+          "tableFrom": "inboxparticipants",
+          "tableTo": "users",
+          "columnsFrom": [
+            "currentuser"
+          ],
+          "columnsTo": [
+            "userid"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
         "inboxparticipants_inboxid_inbox_inboxid_fk": {
           "name": "inboxparticipants_inboxid_inbox_inboxid_fk",
           "tableFrom": "inboxparticipants",
@@ -86,11 +173,11 @@
         }
       },
       "compositePrimaryKeys": {
-        "inboxparticipants_userid_inboxid_pk": {
-          "name": "inboxparticipants_userid_inboxid_pk",
+        "inboxparticipants_userid_currentuser_pk": {
+          "name": "inboxparticipants_userid_currentuser_pk",
           "columns": [
             "userid",
-            "inboxid"
+            "currentuser"
           ]
         }
       },
@@ -220,6 +307,80 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "public.livestock": {
+      "name": "livestock",
+      "schema": "",
+      "columns": {
+        "livestockid": {
+          "name": "livestockid",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "breed": {
+          "name": "breed",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "age": {
+          "name": "age",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "healthy_status": {
+          "name": "healthy_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.livestock_record": {
+      "name": "livestock_record",
+      "schema": "",
+      "columns": {
+        "livestock_record_id": {
+          "name": "livestock_record_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "data": {
+          "name": "data",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "activity": {
+          "name": "activity",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "public.messages": {
       "name": "messages",
       "schema": "",
@@ -308,7 +469,7 @@
           "name": "profilepicture",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "email": {
           "name": "email",
@@ -320,13 +481,13 @@
           "name": "password",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "activationstatus": {
           "name": "activationstatus",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {},

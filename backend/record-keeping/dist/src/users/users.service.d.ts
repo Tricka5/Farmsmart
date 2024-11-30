@@ -12,4 +12,16 @@ export declare class UsersService {
     }>;
     updateActivationStatusById(userId: number, activationStatus: boolean): Promise<void>;
     updateActivationStatusByEmail(email: string, activationStatus: boolean): Promise<void>;
+    updateFirstName(email: string, firstname: string): Promise<{
+        message: string;
+        updatedRows: number;
+    }>;
+    updateLastName(email: string, lastname: string): Promise<{
+        message: string;
+        updatedRows: number;
+    }>;
+    updateProfilePicture(email: string, profilepicture: string): Promise<{
+        message: string;
+        updatedRows: number;
+    }>;
 }

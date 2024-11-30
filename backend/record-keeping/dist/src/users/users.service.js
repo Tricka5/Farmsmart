@@ -121,6 +121,66 @@ let UsersService = class UsersService {
             throw new common_1.InternalServerErrorException(error, 'Could not update activation status by email');
         }
     }
+    async updateFirstName(email, firstname) {
+        try {
+            if (!email || !firstname) {
+                throw new Error('Invalid input data');
+            }
+            console.log('chec', email, firstname);
+            const result = await db_1.db
+                .update(schema_1.usersTable)
+                .set({ firstname: firstname })
+                .where((0, drizzle_orm_1.eq)(schema_1.usersTable.email, email));
+            if (result.count === 0) {
+                throw new Error(`No user found with the email: ${email}`);
+            }
+            return { message: 'First name updated successfully', updatedRows: result.count };
+        }
+        catch (error) {
+            console.error('Error updating first name:', error);
+            throw new Error('Failed to update first name. Please try again later.');
+        }
+    }
+    async updateLastName(email, lastname) {
+        try {
+            if (!email || !lastname) {
+                throw new Error('Invalid input data');
+            }
+            console.log('chec', email, lastname);
+            const result = await db_1.db
+                .update(schema_1.usersTable)
+                .set({ lastname: lastname })
+                .where((0, drizzle_orm_1.eq)(schema_1.usersTable.email, email));
+            if (result.count === 0) {
+                throw new Error(`No user found with the email: ${email}`);
+            }
+            return { message: 'last name updated successfully', updatedRows: result.count };
+        }
+        catch (error) {
+            console.error('Error updating lst name:', error);
+            throw new Error('Failed to update last name. Please try again later.');
+        }
+    }
+    async updateProfilePicture(email, profilepicture) {
+        try {
+            if (!email || !profilepicture) {
+                throw new Error('Invalid input data');
+            }
+            console.log('chec', email, profilepicture);
+            const result = await db_1.db
+                .update(schema_1.usersTable)
+                .set({ profilepicture: profilepicture })
+                .where((0, drizzle_orm_1.eq)(schema_1.usersTable.email, email));
+            if (result.count === 0) {
+                throw new Error(`No user found with the email: ${email}`);
+            }
+            return { message: ' updated successfully', updatedRows: result.count };
+        }
+        catch (error) {
+            console.error('Error updating :', error);
+            throw new Error('Failed to update . Please try again later.');
+        }
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([

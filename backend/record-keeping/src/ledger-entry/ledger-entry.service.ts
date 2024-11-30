@@ -36,7 +36,6 @@ export class LedgerAccountEntryService {
       .select()
       .from(ledgerAccountEntry)
       .where(eq(ledgerAccountEntry.ledgerAccountid, ledgerAccountId))
-      .groupBy(ledgerAccountEntry.type); // Assuming 'type' is the column to group by
     
 
       return entries; // Return the list of ledger entries

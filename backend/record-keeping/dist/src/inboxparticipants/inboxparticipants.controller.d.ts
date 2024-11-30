@@ -1,15 +1,25 @@
 import { InboxparticipantsService } from './inboxparticipants.service';
-import { selectInboxParticpants, selectUsers } from 'src/db/schema';
 export declare class InboxparticipantsController {
     private readonly inboxparticipantsService;
     constructor(inboxparticipantsService: InboxparticipantsService);
     getUserById(inboxidparticipantid: string): Promise<{
-        userid: number;
         inboxid: number;
+        firstuserid: number;
+        seconduserid: number;
     }>;
-    getAllUsers(id: string): Promise<selectUsers[]>;
-    getUsersWithSimilarInbox(id: string): Promise<selectInboxParticpants[]>;
+    getFriends(currentuserid: number): Promise<{
+        secondinboxid: number;
+    }[]>;
+    getAllUsers(id: string): Promise<{
+        password: string;
+        userid: number;
+        firstname: string;
+        lastname: string;
+        profilepicture: string;
+        email: string;
+        activationstatus: boolean;
+    }[]>;
     getCurrentInbox(params: any): Promise<{
         inboxid: number;
-    }[]>;
+    }>;
 }

@@ -42,8 +42,24 @@ export declare const db: import("drizzle-orm/postgres-js").PostgresJsDatabase<{
         name: "inboxparticipants";
         schema: undefined;
         columns: {
-            userid: import("drizzle-orm/pg-core").PgColumn<{
+            firstuserid: import("drizzle-orm/pg-core").PgColumn<{
                 name: "userid";
+                tableName: "inboxparticipants";
+                dataType: "number";
+                columnType: "PgInteger";
+                data: number;
+                driverParam: string | number;
+                notNull: true;
+                hasDefault: false;
+                isPrimaryKey: false;
+                isAutoincrement: false;
+                hasRuntimeDefault: false;
+                enumValues: undefined;
+                baseColumn: never;
+                generated: import("drizzle-orm").GeneratedColumnConfig<number>;
+            }, {}, {}>;
+            seconduserid: import("drizzle-orm/pg-core").PgColumn<{
+                name: "currentuser";
                 tableName: "inboxparticipants";
                 dataType: "number";
                 columnType: "PgInteger";
@@ -136,7 +152,7 @@ export declare const db: import("drizzle-orm/postgres-js").PostgresJsDatabase<{
                 columnType: "PgText";
                 data: string;
                 driverParam: string;
-                notNull: false;
+                notNull: true;
                 hasDefault: false;
                 isPrimaryKey: false;
                 isAutoincrement: false;

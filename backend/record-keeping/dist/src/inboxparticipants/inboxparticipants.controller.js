@@ -27,33 +27,25 @@ let InboxparticipantsController = class InboxparticipantsController {
         }
         return user;
     }
+    async getFriends(currentuserid) {
+        console.log(currentuserid[0]);
+        const users = await this.inboxparticipantsService.getFriends(currentuserid);
+        return users;
+    }
     async getAllUsers(id) {
         const userIdCurrent = parseInt(id, 10);
         if (isNaN(userIdCurrent)) {
             throw new common_1.BadRequestException('Invalid user ID');
         }
-        const result = await this.inboxparticipantsService.getAllinbox([userIdCurrent]);
-        console.log(result);
-        const inboxIds = result.map(({ inboxid }) => inboxid);
-        console.log('inboxid', inboxIds);
-        const related_users = await this.inboxparticipantsService.getUsers(inboxIds);
-        const usersFromRelatedUsers = related_users.map(({ userid }) => userid);
-        const users = await this.inboxparticipantsService.getUserFromUsersTable(usersFromRelatedUsers, userIdCurrent);
+        const result = await this.inboxparticipantsService.getFriends(userIdCurrent);
+        const data = result.map(item => item.secondinboxid);
+        const users = await this.inboxparticipantsService.getUserFromUsersTable(data);
         return users;
-    }
-    async getUsersWithSimilarInbox(id) {
-        const userIds = id.split(',').map(Number);
-        if (userIds.some(isNaN)) {
-            throw new common_1.BadRequestException('Invalid user IDs');
-        }
-        console.log('Received IDs:', userIds);
-        return await this.inboxparticipantsService.getUsers(userIds);
     }
     async getCurrentInbox(params) {
         console.log('happy!!!!!', params);
         try {
             const { otheruser, currentuser } = params;
-            console.log('Received otheruser:', otheruser, 'Received currentuser:', currentuser);
             return await this.inboxparticipantsService.getCurrentInbox(otheruser, currentuser);
         }
         catch (error) {
@@ -71,19 +63,19 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], InboxparticipantsController.prototype, "getUserById", null);
 __decorate([
+    (0, common_1.Get)(':currentuserid/friends'),
+    __param(0, (0, common_1.Param)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], InboxparticipantsController.prototype, "getFriends", null);
+__decorate([
     (0, common_1.Get)(':id/chat'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], InboxparticipantsController.prototype, "getAllUsers", null);
-__decorate([
-    (0, common_1.Get)(':id/CheckSimilars'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], InboxparticipantsController.prototype, "getUsersWithSimilarInbox", null);
 __decorate([
     (0, common_1.Get)('currentinbox/:otheruser/:currentuser'),
     __param(0, (0, common_1.Param)()),

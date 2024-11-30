@@ -7,12 +7,9 @@ export declare class StartConversaation {
     constructor(inboxParticipantsService: InboxparticipantsService, inboxService: InboxService);
     startCoversation(userData: CreateUserDto): Promise<{
         AddFirstParticipant: {
-            userid: number;
             inboxid: number;
-        };
-        AddSecondParticipantt: {
-            userid: number;
-            inboxid: number;
+            firstuserid: number;
+            seconduserid: number;
         };
     }>;
 }

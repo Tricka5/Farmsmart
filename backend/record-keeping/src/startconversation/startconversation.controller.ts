@@ -3,8 +3,7 @@ import { InboxService } from "src/inbox/inbox.service";
 import { InboxparticipantsService } from "src/inboxparticipants/inboxparticipants.service";
 import { CreateUserDto } from "src/users/dto/create-user.dto"; 
 
-
-@Controller('creatingnewconversation')
+@Controller('creatingnewconversatio')
 export class StartConversaation{
     constructor(
         private readonly inboxParticipantsService:InboxparticipantsService,
@@ -16,35 +15,28 @@ export class StartConversaation{
         @Body() userData:CreateUserDto
     ){
         console.log('firstly',userData);
-        const { first_userid, second_userid } = userData;
-
+        const { firstuserid, seconduserid } = userData;
         
 
         try{
 
-            const result= await this.inboxService.createEntry(first_userid);
+            const result= await this.inboxService.createEntry(firstuserid);
 
             //destructure the result
             const {inboxid:inboxid, lastmessage:last_message}=result;
 
             const firstInboxParticipant={
-                userid:first_userid,
+                firstuserid,
+                seconduserid,
                 inboxid,
+                
             };
             
             const AddFirstParticipant=await this.inboxParticipantsService.addParticipant(firstInboxParticipant);
             
             
-            const secondInboxParticipant={
-                userid:second_userid,
-                inboxid,
-            };
-            
-            const AddSecondParticipantt=await this.inboxParticipantsService.addParticipant(secondInboxParticipant);
-
             return{
                 AddFirstParticipant,
-                AddSecondParticipantt,
             }
         }catch(error){
             console.error('error stating conversation', error);

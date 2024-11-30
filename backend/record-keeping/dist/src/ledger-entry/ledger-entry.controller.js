@@ -36,7 +36,9 @@ let LedgerAccountEntryController = class LedgerAccountEntryController {
     }
     async getAllLedgerEntries(ledgerAccountId) {
         try {
+            console.log("hi1");
             const entries = await this.ledgerAccountEntryService.findAll(ledgerAccountId);
+            console.log("hi2");
             return {
                 message: 'Ledger account entries fetched successfully',
                 data: entries
