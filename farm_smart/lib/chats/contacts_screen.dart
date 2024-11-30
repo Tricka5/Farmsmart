@@ -94,7 +94,12 @@ class _ContactsScreenState extends State<ContactsScreen> {
         future: fetchUsers(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator()); // Show a progress indicator while loading
+            return Center(
+              child: SpinKitThreeBounce(
+                color: Colors.green,  // Customize the spinner color
+                size: 30.0,            // Customize the size of the spinner
+              ),
+            ); // Show a progress indicator while loading
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -111,27 +116,30 @@ class _ContactsScreenState extends State<ContactsScreen> {
                     user['firstname'],           // Pass the user's first name
                     user['lastname'],            // Pass the user's last name
                   ),
-                  child: ListTile(
-                    leading: GestureDetector(
-                      onTap: () {
-                        // Navigate to FullScreenImage when the profile picture is tapped
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FullScreenImage(
-                              imageUrl: user['profilepicture'] ?? 'assets/default_profile.png',
+                  child: Padding(  // Wrap the ListTile in Padding widget to add padding
+                    padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),  // Add padding around each user
+                    child: ListTile(
+                      leading: GestureDetector(
+                        onTap: () {
+                          // Navigate to FullScreenImage when the profile picture is tapped
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FullScreenImage(
+                                imageUrl: user['profilepicture'] ?? 'assets/default_profile.png',
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                      child: CircleAvatar(
-                        radius: 30,
-                        backgroundImage: user['profilepicture'] != null && user['profilepicture'].isNotEmpty
-                            ? NetworkImage(user['profilepicture'])  // Load network image if available
-                            : AssetImage('assets/default_profile.png') as ImageProvider, // Fallback to default image
+                          );
+                        },
+                        child: CircleAvatar(
+                          radius: 30,
+                          backgroundImage: user['profilepicture'] != null && user['profilepicture'].isNotEmpty
+                              ? NetworkImage(user['profilepicture'])  // Load network image if available
+                              : AssetImage('assets/default_profile.png') as ImageProvider, // Fallback to default image
+                        ),
                       ),
+                      title: Text('${user['firstname']} ${user['lastname']}'),
                     ),
-                    title: Text('${user['firstname']} ${user['lastname']}'),
                   ),
                 );
               },

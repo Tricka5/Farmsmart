@@ -49,7 +49,7 @@ import {
   
       // Emit refresh event to all connected clients
       this.clients.forEach((client) => {
-        client.emit('refresh', { message: data });
+        client.emit('refresh', { message: 'recieved' });
       });
     }
   }
